@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 功能链管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CBCB',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-login {
+                background: linear-gradient(135deg, #165DFF 0%, #36CBCB 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .scifi-glow {
+                box-shadow: 0 0 20px rgba(22, 93, 255, 0.5), 0 0 40px rgba(22, 93, 255, 0.3);
+            }
+            .scifi-border {
+                border: 1px solid rgba(22, 93, 255, 0.3);
+                backdrop-filter: blur(8px);
+            }
+        }
+    </style>
+    
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(22, 93, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(22, 93, 255, 0.8), 0 0 30px rgba(22, 93, 255, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(22, 93, 255, 0.5); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        /* 输入框焦点效果 */
+        .input-focus:focus {
+            border-color: #165DFF;
+            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+            outline: none;
+        }
+        
+        /* 登录按钮悬停效果 */
+        .btn-primary:hover {
+            background-color: #0E49E2;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.4);
+        }
+        
+        /* 科幻背景 */
+        .scifi-bg {
+            background: radial-gradient(circle at top right, #1a2a6c, #0f172a);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scifi-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(22, 93, 255, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 80% 60%, rgba(54, 203, 203, 0.15) 0%, transparent 25%),
+                linear-gradient(45deg, transparent 0%, rgba(22, 93, 255, 0.05) 50%, transparent 100%);
+            z-index: 0;
+        }
+        
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(22, 93, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(22, 93, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 主容器 - 左右布局 -->
+    <div class="flex flex-col lg:flex-row min-h-screen w-full">
+        <!-- 左侧科幻图片区域 -->
+        <div class="lg:w-1/2 scifi-bg relative flex items-center justify-center p-8 order-2 lg:order-1">
+            <!-- 网格线效果 -->
+            <div class="grid-lines"></div>
+            
+            <!-- 科幻图形元素 -->
+            <div class="relative z-20 text-center">
+                <!-- 功能链图标 -->
+                <div class="w-32 h-32 mx-auto mb-6 scifi-glow rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-float">
+                    <i class="fa fa-link text-white text-5xl"></i>
+                </div>
+                
+                <!-- 标题 -->
+                <h1 class="text-4xl font-bold text-white mb-4 animate-fadeIn">功能链管理系统</h1>
+                
+                <!-- 标语 -->
+                <p class="text-xl text-blue-100 mb-8 max-w-md mx-auto animate-fadeIn" style="animation-delay: 0.2s">
+                    智能驱动 · 高效链接 · 未来科技
+                </p>
+                
+                <!-- 装饰性动态元素 -->
+                <div class="flex justify-center space-x-4 mt-8 animate-fadeIn" style="animation-delay: 0.4s">
+                    <div class="w-3 h-3 rounded-full bg-blue-400 animate-pulse-slow"></div>
+                    <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse-slow" style="animation-delay: 0.3s"></div>
+                    <div class="w-3 h-3 rounded-full bg-blue-400 animate-pulse-slow" style="animation-delay: 0.6s"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧登录框区域 -->
+        <div class="lg:w-1/2 flex items-center justify-center p-8 bg-white order-1 lg:order-2">
+            <div class="max-w-md w-full space-y-8 animate-fadeIn">
+                <!-- 登录卡片 -->
+                <div class="bg-white rounded-xl shadow-2xl overflow-hidden scifi-border">
+                    <!-- 登录表单 -->
+                    <div class="p-8">
+                <form id="login-form" class="space-y-6">
+                    <!-- 错误提示区域 -->
+                    <div id="error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+                        <i class="fa fa-exclamation-circle mr-2"></i>
+                        <span id="error-text">用户名或密码错误</span>
+                    </div>
+                    
+                    <!-- 用户名输入 -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <input 
+                                id="username" 
+                                name="username" 
+                                type="text" 
+                                required 
+                                class="input-focus relative block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                placeholder="请输入用户名"
+                                autocomplete="username"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- 密码输入 -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa fa-lock"></i>
+                            </div>
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password" 
+                                required 
+                                class="input-focus relative block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                placeholder="请输入密码"
+                                autocomplete="current-password"
+                            >
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <button 
+                                    type="button" 
+                                    id="toggle-password" 
+                                    class="text-gray-400 hover:text-gray-600 focus:outline-none"
+                                    aria-label="显示/隐藏密码"
+                                >
+                                    <i class="fa fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 记住我选项 -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input 
+                                id="remember-me" 
+                                name="remember-me" 
+                                type="checkbox" 
+                                class="h-4 w-4 text-primary focus:ring-primary/50 border-gray-300 rounded"
+                            >
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                                记住我
+                            </label>
+                        </div>
+                        <a href="#" class="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                            忘记密码?
+                        </a>
+                    </div>
+                    
+                    <!-- 登录按钮 -->
+                    <div>
+                        <button 
+                            type="submit" 
+                            id="login-button" 
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white font-medium shadow-sm bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all-300"
+                        >
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                                <i class="fa fa-sign-in group-hover:animate-pulse"></i>
+                            </span>
+                            登录系统
+                        </button>
+                    </div>
+                    
+                    <!-- 账号密码提示 -->
+                    <div class="hidden bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-blue-800">
+                            <i class="fa fa-info-circle mr-1"></i> 
+                            测试账号: <strong>smvic</strong> | 密码: <strong>123456</strong>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 底部信息 -->
+        <div class="text-center text-sm text-gray-500 mt-6">
+            <p>&copy; 2024 功能链管理系统 - 版权所有</p>
+        </div>
+    </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 显示/隐藏密码
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            // 切换密码可见性
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // 切换图标
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+        
+        // 登录表单提交
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            const loginButton = document.getElementById('login-button');
+            
+            // 清空之前的错误信息
+            errorMessage.classList.add('hidden');
+            
+            // 模拟登录过程
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<span class="flex items-center"><i class="fa fa-circle-o-notch fa-spin mr-2"></i> 登录中...</span>';
+            
+            // 账号密码验证（硬编码）
+            setTimeout(() => {
+                if (username === 'smvic' && password === '123456') {
+                    // 登录成功，保存登录状态到localStorage
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', username);
+                    
+                    // 显示成功提示（可选）
+                    errorMessage.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'text-red-700');
+                    errorMessage.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+                    document.getElementById('error-text').textContent = '登录成功，正在跳转...';
+                    
+                    // 延迟跳转到首页
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    // 登录失败
+                    errorMessage.classList.remove('hidden');
+                    document.getElementById('error-text').textContent = '用户名或密码错误，请重新输入';
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = '<span class="absolute left-0 inset-y-0 flex items-center pl-3"><i class="fa fa-sign-in group-hover:animate-pulse"></i></span> 登录系统';
+                    
+                    // 输入框抖动动画
+                    document.getElementById('username').classList.add('border-red-500');
+                    document.getElementById('password').classList.add('border-red-500');
+                    setTimeout(() => {
+                        document.getElementById('username').classList.remove('border-red-500');
+                        document.getElementById('password').classList.remove('border-red-500');
+                    }, 1000);
+                }
+            }, 1000); // 模拟网络延迟
+        });
+        
+        // 自动填充测试账号
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可选：自动填充测试账号
+            // document.getElementById('username').value = 'smvic';
+            // document.getElementById('password').value = '123456';
+            
+            // 为输入框添加键盘事件
+            document.getElementById('username').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('password').focus();
+                }
+            });
+            
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('login-form').dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            // 聚焦到用户名输入框
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>
+</html>
