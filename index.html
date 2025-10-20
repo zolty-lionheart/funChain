@@ -507,11 +507,23 @@
         let sortField = '';
         let sortDirection = 'asc';
 
+        // 计算列总计
+        function calculateTotals(data) {
+            return {
+                '测试实施能力(SOP)': data.reduce((sum, chain) => sum + (chain['测试实施能力(SOP)'] || 0), 0),
+                '资质授权覆盖(CMA)': data.reduce((sum, chain) => sum + (chain['资质授权覆盖(CMA)'] || 0), 0),
+                '政策及标准支撑能力': data.reduce((sum, chain) => sum + (chain['政策及标准支撑能力'] || 0), 0),
+                '标准研究能力': data.reduce((sum, chain) => sum + (chain['标准研究能力'] || 0), 0),
+                '设备': data.reduce((sum, chain) => sum + (chain['设备'] || 0), 0)
+            };
+        }
+        
         // 渲染功能链列表
         function renderChainList() {
             const tbody = document.getElementById('chain-list-body');
             tbody.innerHTML = '';
             
+            // 渲染数据行
             sortedData.forEach((chain, index) => {
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-50 transition-colors';
@@ -545,6 +557,38 @@
                 `;
                 tbody.appendChild(tr);
             });
+            
+            // 只有在有数据时才添加总计行
+            if (sortedData.length > 0) {
+                // 计算总计
+                const totals = calculateTotals(sortedData);
+                
+                // 添加总计行
+                const totalRow = document.createElement('tr');
+                totalRow.className = 'bg-gray-100 font-semibold';
+                totalRow.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-gray-900">总计</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${totals['测试实施能力(SOP)']}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${totals['资质授权覆盖(CMA)']}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${totals['政策及标准支撑能力']}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${totals['标准研究能力']}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${totals['设备']}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap"></td>
+                `;
+                tbody.appendChild(totalRow);
+            }
         }
 
         // 添加表格排序功能
