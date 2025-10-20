@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,9 @@
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-    
+    <!-- 功能链数据 -->
+    <script src="data.js"></script>
+
     <!-- Tailwind 配置 -->
     <script>
         tailwind.config = {
@@ -43,7 +46,7 @@
             }
         }
     </script>
-    
+
     <!-- 自定义工具类 -->
     <style type="text/tailwindcss">
         @layer utilities {
@@ -58,66 +61,79 @@
             }
         }
     </style>
-    
+
     <style>
         /* 基础样式 */
         body {
             font-family: 'Inter', system-ui, sans-serif;
             background-color: #F7F8FA;
         }
-        
+
         /* 动画效果 */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out;
         }
-        
+
         /* 表格样式 */
         .detail-table th {
             background-color: #F7F8FA;
             font-weight: 600;
             color: #4E5969;
         }
-        
+
         .detail-table td {
             border-top: 1px solid #E5E6EB;
         }
     </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- 顶部导航栏 -->
     <header class="bg-white shadow-md fixed w-full top-0 z-50 transition-all duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <i class="fa fa-car text-primary text-2xl"></i>
-                <h1 class="text-lg md:text-xl font-semibold text-gray-900">功能链管理系统</h1>
+                <h1 class="text-lg md:text-xl font-semibold text-gray-900">功能链详情</h1>
             </div>
-            
+
             <!-- 导航菜单 - 桌面端 -->
             <nav class="hidden md:flex space-x-6">
-                <a href="index.html" class="nav-item py-1 px-2 hover:text-primary transition-colors"><i class="fa fa-dashboard mr-1"></i> 总体看板</a>
-                <a href="chain_detail.html" class="nav-item py-1 px-2 text-primary font-medium transition-colors"><i class="fa fa-link mr-1"></i> 功能链详情</a>
+                <a href="index.html" class="nav-item py-1 px-2 hover:text-primary transition-colors"><i
+                        class="fa fa-home mr-1"></i> 首页</a>
+                <a href="chain_detail.html" class="nav-item py-1 px-2 text-primary font-medium transition-colors"><i
+                        class="fa fa-link mr-1"></i> 功能链详情</a>
             </nav>
-            
+
             <!-- 移动端菜单按钮 -->
-            <button class="md:hidden text-gray-600 hover:text-primary transition-colors" id="mobile-menu-btn" aria-label="菜单">
+            <button class="md:hidden text-gray-600 hover:text-primary transition-colors" id="mobile-menu-btn"
+                aria-label="菜单">
                 <i class="fa fa-bars text-xl"></i>
             </button>
         </div>
-        
+
         <!-- 移动端菜单 -->
         <div class="md:hidden hidden bg-white border-t animate-fadeIn" id="mobile-menu">
             <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i class="fa fa-dashboard mr-2"></i> 总体看板</a>
-                <a href="chain_detail.html" class="py-3 px-2 rounded-md bg-blue-50 text-primary font-medium"><i class="fa fa-link mr-2"></i> 功能链详情</a>
+                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i
+                        class="fa fa-dashboard mr-2"></i> 首页</a>
+                <a href="chain_detail.html" class="py-3 px-2 rounded-md bg-blue-50 text-primary font-medium"><i
+                        class="fa fa-link mr-2"></i> 功能链详情</a>
             </div>
         </div>
     </header>
-    
+
     <!-- 主内容区 -->
     <main class="flex-grow container mx-auto px-4 pt-24 pb-12">
         <!-- 面包屑导航 -->
@@ -128,7 +144,7 @@
             <i class="fa fa-angle-right mx-2 text-gray-400"></i>
             <span id="chain-name-breadcrumb" class="text-primary font-medium">AD_智能驾驶系统功能链</span>
         </div>
-        
+
         <!-- 功能链标题 -->
         <div class="bg-white rounded-lg shadow-card p-6 mb-6 animate-fadeIn">
             <div class="flex items-center mb-4">
@@ -136,25 +152,197 @@
                 <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-900" id="chain-title">AD_智能驾驶系统功能链</h2>
             </div>
             <div class="flex flex-wrap gap-3">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                     <i class="fa fa-check-circle mr-1"></i> 核心功能链
                 </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                     <i class="fa fa-line-chart mr-1"></i> 成熟度等级: L3
                 </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                     <i class="fa fa-calendar mr-1"></i> 更新时间: 2025-06-30
                 </span>
             </div>
         </div>
-        
+
+
+
+        <!-- 功能链情况容器 -->
+        <div class="bg-white rounded-lg shadow-card p-6 mb-6 animate-fadeIn" style="animation-delay: 0.15s">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">功能链情况</h3>
+
+            <!-- 标签页导航 -->
+            <div class="border-b border-gray-200 mb-4">
+                <nav class="flex space-x-8 overflow-x-auto scrollbar-hide">
+                    <button
+                        class="tab-btn active pb-3 text-primary border-b-2 border-primary font-medium text-sm whitespace-nowrap"
+                        data-tab="tab1">
+                        市场/业务需求分析
+                    </button>
+                    <button
+                        class="tab-btn pb-3 text-gray-500 hover:text-primary transition-colors text-sm whitespace-nowrap"
+                        data-tab="tab2">
+                        行业发展/技术发展现状分析
+                    </button>
+                    <button
+                        class="tab-btn pb-3 text-gray-500 hover:text-primary transition-colors text-sm whitespace-nowrap"
+                        data-tab="tab3">
+                        政府/行业监管需求分析
+                    </button>
+                    <button
+                        class="tab-btn pb-3 text-gray-500 hover:text-primary transition-colors text-sm whitespace-nowrap"
+                        data-tab="tab4">
+                        功能链建设目标
+                    </button>
+                    <button
+                        class="tab-btn pb-3 text-gray-500 hover:text-primary transition-colors text-sm whitespace-nowrap"
+                        data-tab="tab5">
+                        建设内容与实施途径
+                    </button>
+                    <button
+                        class="tab-btn pb-3 text-gray-500 hover:text-primary transition-colors text-sm whitespace-nowrap"
+                        data-tab="tab6">
+                        预期达到的水平
+                    </button>
+                </nav>
+            </div>
+
+            <!-- 标签页内容 -->
+            <div class="tab-content">
+                <!-- 市场/业务需求分析 -->
+                <div id="tab1" class="tab-pane active">
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 mb-4">
+                            智能驾驶系统作为汽车产业的重要发展方向，市场需求呈现快速增长态势。根据行业数据，2024年全球智能驾驶市场规模达到800亿美元，预计到2030年将突破2000亿美元。</p>
+                        <p class="text-gray-700 mb-4">主要业务需求包括：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>提升驾驶安全性，减少人为因素导致的交通事故</li>
+                            <li>改善驾驶体验，实现部分或完全自动驾驶</li>
+                            <li>满足消费者对智能化、网联化汽车产品的需求</li>
+                            <li>适应新能源汽车与智能驾驶技术融合发展趋势</li>
+                        </ul>
+                        <p class="text-gray-700">功能链需覆盖从感知、决策到执行的完整技术链路，确保测试验证能力满足市场对智能驾驶系统可靠性、安全性和性能的要求。</p>
+                    </div>
+                </div>
+
+                <!-- 行业发展/技术发展现状分析 -->
+                <div id="tab2" class="tab-pane hidden">
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 mb-4">智能驾驶技术正处于快速发展阶段，主要呈现以下特点：</p>
+                        <p class="text-gray-700 mb-4">技术发展现状：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>传感器技术：多传感器融合成为主流，激光雷达成本下降推动应用普及</li>
+                            <li>算法发展：深度学习算法在目标检测、路径规划等领域取得突破</li>
+                            <li>计算平台：高算力芯片满足实时处理需求，能耗比持续优化</li>
+                            <li>车路协同：V2X技术与智能驾驶融合，提升复杂场景适应性</li>
+                        </ul>
+                        <p class="text-gray-700 mb-4">行业发展趋势：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>智能驾驶等级逐步提升，L3级别开始商业化部署</li>
+                            <li>标准化工作加速推进，行业规范体系日趋完善</li>
+                            <li>跨界融合加深，传统车企与科技公司合作共赢</li>
+                            <li>测试验证需求激增，专业测试服务市场快速扩大</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 政府/行业监管需求分析 -->
+                <div id="tab3" class="tab-pane hidden">
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 mb-4">智能驾驶系统的安全运行涉及公共安全，政府和行业监管日益严格：</p>
+                        <p class="text-gray-700 mb-4">主要监管要求：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>国家市场监督管理总局要求智能驾驶系统需通过强制性认证</li>
+                            <li>交通运输部发布《智能汽车道路测试与示范应用管理规范》</li>
+                            <li>工信部推动智能网联汽车测试评价体系建设</li>
+                            <li>各地政府相继出台智能驾驶测试道路管理办法</li>
+                        </ul>
+                        <p class="text-gray-700 mb-4">合规要点：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>功能安全符合ISO 26262标准要求</li>
+                            <li>预期功能安全满足ISO/PAS 21448规范</li>
+                            <li>数据安全与隐私保护满足相关法律法规</li>
+                            <li>测试验证报告需具备CMA资质机构出具的证明</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 功能链建设目标 -->
+                <div id="tab4" class="tab-pane hidden">
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 mb-4">AD_智能驾驶系统功能链建设目标明确，旨在打造国内领先的测试验证能力体系：</p>
+                        <p class="text-gray-700 mb-4">总体目标：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>建立覆盖L2-L4级智能驾驶系统的全流程测试验证能力</li>
+                            <li>形成完善的测试标准体系和评价方法</li>
+                            <li>具备国际先进水平的测试设备和环境条件</li>
+                            <li>培养一支高水平的专业测试团队</li>
+                        </ul>
+                        <p class="text-gray-700 mb-4">具体指标：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>SOP文件数量达到100项以上，覆盖核心测试场景</li>
+                            <li>CMA资质覆盖智能驾驶全部关键测试项目</li>
+                            <li>标准研究成果转化为行业标准或规范5项以上</li>
+                            <li>测试设备数量和性能满足大规模测试需求</li>
+                            <li>政策支撑能力持续提升，参与行业政策制定</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 建设内容与实施途径 -->
+                <div id="tab5" class="tab-pane hidden">
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 mb-4">功能链建设内容丰富，涵盖测试能力、资质认证、标准研究等多个方面：</p>
+                        <p class="text-gray-700 mb-4">建设内容：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>测试场景库建设：开发覆盖典型和极限场景的测试用例</li>
+                            <li>测试设备采购：高精度传感器、数据采集系统、仿真测试平台等</li>
+                            <li>测试场地改造：建设专业智能驾驶测试道路和环境</li>
+                            <li>人才队伍培养：引进和培养测试工程师、算法专家等</li>
+                            <li>管理体系完善：建立符合国际标准的质量管理体系</li>
+                        </ul>
+                        <p class="text-gray-700 mb-4">实施途径：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>分阶段实施：近期完善基础测试能力，中期提升综合测试水平，远期建成国际先进的测试验证平台</li>
+                            <li>产学研合作：与高校、科研院所、企业建立合作关系</li>
+                            <li>国际对标：参考国际先进经验，引入先进测试方法和设备</li>
+                            <li>持续改进：建立反馈机制，不断优化测试流程和方法</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 预期达到的水平 -->
+                <div id="tab6" class="tab-pane hidden">
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 mb-4">通过功能链建设，预期达到国内领先、国际先进的智能驾驶测试验证水平：</p>
+                        <p class="text-gray-700 mb-4">技术水平：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>测试能力覆盖L2-L4级智能驾驶系统全功能测试</li>
+                            <li>具备复杂场景测试、极限条件测试、耐久测试等能力</li>
+                            <li>形成数据驱动的测试评价体系，支持AI算法测试</li>
+                            <li>测试效率和准确性达到国际先进水平</li>
+                        </ul>
+                        <p class="text-gray-700 mb-4">行业地位：</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li>成为国内权威的智能驾驶测试验证机构</li>
+                            <li>参与国家和行业标准制定，拥有话语权</li>
+                            <li>与国际知名测试机构建立合作关系，实现互认</li>
+                            <li>为国内外车企提供高质量的测试验证服务</li>
+                        </ul>
+                        <p class="text-gray-700">功能链成熟度达到L4级别，具备支撑智能驾驶技术创新和产业发展的能力。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- 功能链清单表格 -->
         <div class="bg-white rounded-lg shadow-card p-6 mb-6 animate-fadeIn" style="animation-delay: 0.1s">
             <table class="w-full detail-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-3 text-left">功能链清单</th>
-                        <th class="px-4 py-3 text-left">测试实施能力(SOP)</th>
+                        <th class="px-4 py-3 text-left">SOP</th>
                         <th class="px-4 py-3 text-left">资质授权覆盖(CMA)</th>
                         <th class="px-4 py-3 text-left">数据管理能力</th>
                         <th class="px-4 py-3 text-left">方法研究与分析</th>
@@ -177,35 +365,27 @@
                 </tbody>
             </table>
         </div>
-        
         <!-- 图表区域 -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- 雷达图 -->
             <div class="bg-white rounded-lg shadow-card p-6 animate-fadeIn" style="animation-delay: 0.2s">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">能力雷达图</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">能力雷达图</h3>
+                </div>
                 <div class="aspect-square flex items-center justify-center">
                     <canvas id="radarChart" width="400" height="400"></canvas>
                 </div>
             </div>
-            
+
             <!-- 标准覆盖柱状图 -->
             <div class="bg-white rounded-lg shadow-card p-6 animate-fadeIn" style="animation-delay: 0.3s">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">标准覆盖分布</h3>
                 <div class="aspect-square flex items-center justify-center">
                     <canvas id="barChart" width="400" height="400"></canvas>
                 </div>
-                <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs">
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-yellow-400 rounded-sm mr-1"></span>GB</span>
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-blue-500 rounded-sm mr-1"></span>ECE</span>
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-green-500 rounded-sm mr-1"></span>JT</span>
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-orange-500 rounded-sm mr-1"></span>EuroNCAP</span>
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-teal-500 rounded-sm mr-1"></span>EU</span>
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-purple-500 rounded-sm mr-1"></span>ISO</span>
-                    <span class="inline-flex items-center"><span class="w-3 h-3 bg-red-400 rounded-sm mr-1"></span>车辆安全检测基准</span>
-                </div>
             </div>
         </div>
-        
+
         <!-- 功能详情区域 -->
         <div class="grid grid-cols-1 gap-6">
             <!-- SOP 详情 -->
@@ -219,44 +399,47 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <!-- SOP 示例项 -->
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all-300">
+                    <div
+                        class="border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all-300">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium text-gray-900">自适应巡航控制系统测试</h4>
+                            <h4 class="font-medium text-gray-900">电动汽车充电接口测试</h4>
                             <span class="text-success text-sm">有效</span>
                         </div>
-                        <p class="text-sm text-gray-500 mb-3">测试自适应巡航控制系统在不同车速和路况下的性能表现</p>
+                        <p class="text-sm text-gray-500 mb-3">测试电动汽车充电接口的电气性能、机械强度、温升和安全性，符合GB/T 20234标准要求</p>
                         <div class="flex justify-between items-center text-xs text-gray-500">
                             <span><i class="fa fa-calendar-o mr-1"></i> 2025-03-15</span>
                             <span><i class="fa fa-file-text-o mr-1"></i> V1.2</span>
                         </div>
                     </div>
-                    
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all-300">
+
+                    <div
+                        class="border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all-300">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium text-gray-900">车道保持辅助系统测试</h4>
+                            <h4 class="font-medium text-gray-900">动力电池系统性能测试</h4>
                             <span class="text-success text-sm">有效</span>
                         </div>
-                        <p class="text-sm text-gray-500 mb-3">评估车道保持辅助系统在不同道路条件下的准确性和稳定性</p>
+                        <p class="text-sm text-gray-500 mb-3">评估动力电池系统的容量、能量密度、循环寿命、充放电性能和温度适应性</p>
                         <div class="flex justify-between items-center text-xs text-gray-500">
                             <span><i class="fa fa-calendar-o mr-1"></i> 2025-02-20</span>
                             <span><i class="fa fa-file-text-o mr-1"></i> V1.1</span>
                         </div>
                     </div>
-                    
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all-300">
+
+                    <div
+                        class="border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all-300">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-medium text-gray-900">自动紧急制动系统测试</h4>
+                            <h4 class="font-medium text-gray-900">电池热管理系统验证规程</h4>
                             <span class="text-warning text-sm">待更新</span>
                         </div>
-                        <p class="text-sm text-gray-500 mb-3">测试自动紧急制动系统在不同场景下的响应时间和有效性</p>
+                        <p class="text-sm text-gray-500 mb-3">验证电池热管理系统在不同环境温度下的冷却与加热性能，确保电芯温度均匀性及系统安全运行</p>
                         <div class="flex justify-between items-center text-xs text-gray-500">
-                            <span><i class="fa fa-calendar-o mr-1"></i> 2025-01-10</span>
+                            <span><i class="fa fa-calendar-o mr-1"></i> 2025-03-15</span>
                             <span><i class="fa fa-file-text-o mr-1"></i> V1.0</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- CMA 资质详情 -->
             <div class="bg-white rounded-lg shadow-card p-6 animate-fadeIn" style="animation-delay: 0.5s">
                 <div class="flex justify-between items-center mb-4">
@@ -279,25 +462,31 @@
                         </thead>
                         <tbody>
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 font-medium">智能驾驶系统检测资质</td>
+                                <td class="px-4 py-3 font-medium">氢燃料电池电堆性能检测资质</td>
                                 <td class="px-4 py-3">国家市场监督管理总局</td>
                                 <td class="px-4 py-3">CMA-2025-0123</td>
                                 <td class="px-4 py-3">2027-06-30</td>
-                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">有效</span></td>
+                                <td class="px-4 py-3"><span
+                                        class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">有效</span>
+                                </td>
                             </tr>
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 font-medium">车辆安全性能检测资质</td>
+                                <td class="px-4 py-3 font-medium">电解水制氢设备能效与产氢纯度检测资质</td>
                                 <td class="px-4 py-3">国家市场监督管理总局</td>
                                 <td class="px-4 py-3">CMA-2025-0124</td>
                                 <td class="px-4 py-3">2027-06-30</td>
-                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">有效</span></td>
+                                <td class="px-4 py-3"><span
+                                        class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">有效</span>
+                                </td>
                             </tr>
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 font-medium">自动驾驶功能测试资质</td>
-                                <td class="px-4 py-3">交通运输部</td>
-                                <td class="px-4 py-3">JT-CMA-2025-0089</td>
+                                <td class="px-4 py-3 font-medium">固态储氢材料吸/放氢性能检测资质</td>
+                                <td class="px-4 py-3">国家市场监督管理总局</td>
+                                <td class="px-4 py-3">CMA-2024-H2-0192</td>
                                 <td class="px-4 py-3">2026-12-31</td>
-                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">有效</span></td>
+                                <td class="px-4 py-3"><span
+                                        class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">有效</span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -305,7 +494,7 @@
             </div>
         </div>
     </main>
-    
+
     <!-- 页脚 -->
     <footer class="bg-white border-t border-gray-200 py-6">
         <div class="container mx-auto px-4">
@@ -327,7 +516,7 @@
             </div>
         </div>
     </footer>
-    
+
     <!-- JavaScript -->
     <script>
         // 登录验证检查
@@ -337,12 +526,12 @@
                 window.location.href = 'login.html';
             }
         }
-        
+
         // 页面加载时检查登录状态
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             checkLoginStatus();
         });
-        
+
         // 添加登出功能
         function logout() {
             localStorage.removeItem('isLoggedIn');
@@ -350,127 +539,451 @@
             window.location.href = 'login.html';
         }
         // 移动端菜单切换
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+        document.getElementById('mobile-menu-btn').addEventListener('click', function () {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
         });
-        
+
+        // 标签页切换功能
+        function setupTabNavigation() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // 获取当前标签页ID
+                    const tabId = this.getAttribute('data-tab');
+
+                    // 移除所有标签按钮的活跃状态
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'text-primary', 'border-b-2', 'border-primary');
+                        btn.classList.add('text-gray-500');
+                    });
+
+                    // 添加当前标签按钮的活跃状态
+                    this.classList.add('active', 'text-primary', 'border-b-2', 'border-primary');
+                    this.classList.remove('text-gray-500');
+
+                    // 隐藏所有内容面板
+                    const tabPanes = document.querySelectorAll('.tab-pane');
+                    tabPanes.forEach(pane => {
+                        pane.classList.add('hidden');
+                        pane.classList.remove('active');
+                    });
+
+                    // 显示当前内容面板
+                    const activePane = document.getElementById(tabId);
+                    if (activePane) {
+                        activePane.classList.remove('hidden');
+                        activePane.classList.add('active');
+                    }
+                });
+            });
+
+            // 添加图例开关功能
+            document.getElementById('legendToggle').addEventListener('change', function () {
+                if (window.radarChartInstance) {
+                    window.radarChartInstance.options.plugins.legend.display = this.checked;
+                    window.radarChartInstance.update();
+
+                    // 更新开关样式
+                    const dot = this.nextElementSibling.querySelector('.dot');
+                    if (this.checked) {
+                        dot.classList.add('translate-x-6');
+                    } else {
+                        dot.classList.remove('translate-x-6');
+                    }
+                }
+            });
+        }
+
         // 从URL获取功能链ID参数
         function getChainIdFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id') || 'AD_智能驾驶系统功能链'; // 默认值
+            // 获取URL中的id参数
+            const idParam = urlParams.get('id');
+
+            // 如果URL中有id参数，返回它，否则返回默认的chainId 3（AD_智能驾驶系统功能链）
+            return idParam || '3';
         }
-        
-        // 功能链数据模型
-        const chainData = {
-            'AD_智能驾驶系统功能链': {
-                name: 'AD_智能驾驶系统功能链',
-                sopCount: 52,
-                cmaCount: 50,
-                dataCapability: 0,
-                researchCapability: 0,
-                policySupport: 23,
-                standardResearch: 27,
-                equipmentCount: 147,
-                maturityLevel: 'L3',
-                updateTime: '2025-06-30',
-                radarData: {
-                    labels: ['测试实施能力', '资质授权覆盖(CMA)', '数据管理能力', '方法研究与分析', '政策及标准支撑能力'],
-                    datasets: [{
-                        label: '当前值',
-                        data: [52, 50, 0, 0, 23],
-                        backgroundColor: 'rgba(22, 93, 255, 0.2)',
-                        borderColor: 'rgba(22, 93, 255, 1)',
-                        pointBackgroundColor: 'rgba(22, 93, 255, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(22, 93, 255, 1)'
-                    }]
-                },
-                barData: {
-                    labels: ['GB', 'ECE', 'JT', 'EuroNCAP', 'EU', 'ISO', '车辆安全检测基准'],
-                    datasets: [{
-                        label: '标准数量',
-                        data: [50, 28, 24, 14, 11, 10, 9],
-                        backgroundColor: [
-                            'rgba(250, 204, 21, 0.8)',  // 黄色
-                            'rgba(37, 99, 235, 0.8)',  // 蓝色
-                            'rgba(16, 185, 129, 0.8)', // 绿色
-                            'rgba(249, 115, 22, 0.8)', // 橙色
-                            'rgba(20, 184, 166, 0.8)', // 青色
-                            'rgba(124, 58, 237, 0.8)', // 紫色
-                            'rgba(248, 113, 113, 0.8)'  // 红色
-                        ],
-                        borderWidth: 0
-                    }]
+
+        // 从 data.js 获取功能链数据
+        function getChainDataFromDataJs(chainId) {
+            console.log('尝试从data.js获取功能链数据，chainId:', chainId);
+
+            // 将chainId转换为数字（如果可能）
+            const idNum = parseInt(chainId);
+            const isNumericId = !isNaN(idNum);
+
+            console.log('idNum:', idNum);
+            console.log('isNumericId:', isNumericId);
+            console.log('window.functionalChains是否存在:', window.functionalChains);
+
+            // 首先检查functionalChains数组（这是data.js中定义的主要数据源）
+            if (window.functionalChains && Array.isArray(window.functionalChains)) {
+                // 优先通过数字ID查找
+                if (isNumericId) {
+                    const foundById = window.functionalChains.find(item => item.chainId === idNum);
+                    if (foundById) {
+                        console.log('通过chainId找到数据:', foundById);
+                        return foundById;
+                    }
                 }
-            },
-            // 可以添加更多功能链数据
-            'VCU_整车控制器功能链': {
-                name: 'VCU_整车控制器功能链',
-                sopCount: 45,
-                cmaCount: 42,
-                dataCapability: 5,
-                researchCapability: 8,
-                policySupport: 15,
-                standardResearch: 20,
-                equipmentCount: 120,
-                maturityLevel: 'L4',
-                updateTime: '2025-06-28',
-                radarData: {
-                    labels: ['测试实施能力', '资质授权覆盖(CMA)', '数据管理能力', '方法研究与分析', '政策及标准支撑能力'],
-                    datasets: [{
-                        label: '当前值',
-                        data: [45, 42, 5, 8, 15],
-                        backgroundColor: 'rgba(54, 203, 203, 0.2)',
-                        borderColor: 'rgba(54, 203, 203, 1)',
-                        pointBackgroundColor: 'rgba(54, 203, 203, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(54, 203, 203, 1)'
-                    }]
-                },
-                barData: {
-                    labels: ['GB', 'ECE', 'JT', 'EuroNCAP', 'EU', 'ISO', '车辆安全检测基准'],
-                    datasets: [{
-                        label: '标准数量',
-                        data: [45, 25, 20, 12, 10, 8, 7],
-                        backgroundColor: [
-                            'rgba(250, 204, 21, 0.8)',
-                            'rgba(37, 99, 235, 0.8)',
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(249, 115, 22, 0.8)',
-                            'rgba(20, 184, 166, 0.8)',
-                            'rgba(124, 58, 237, 0.8)',
-                            'rgba(248, 113, 113, 0.8)'
-                        ],
-                        borderWidth: 0
-                    }]
+                // 如果通过数字ID没找到，可以尝试通过名称查找
+                if (!isNumericId) {
+                    const foundByName = window.functionalChains.find(item =>
+                        item['功能链清单'] === chainId ||
+                        (item['功能链清单'] && item['功能链清单'].includes(chainId))
+                    );
+                    if (foundByName) {
+                        console.log('通过名称找到数据:', foundByName);
+                        return foundByName;
+                    }
                 }
             }
-        };
-        
+
+            // 检查chainList数组作为备选
+            if (window.chainList && Array.isArray(window.chainList)) {
+                console.log('在window.chainList中查找');
+                // 优先通过数字ID查找
+                if (isNumericId) {
+                    const foundById = window.chainList.find(item => item.chainId === idNum);
+                    if (foundById) {
+                        console.log('通过chainId找到数据:', foundById);
+                        return foundById;
+                    }
+                }
+                // 然后通过功能链清单名称查找
+                const foundByName = window.chainList.find(item =>
+                    item['功能链清单'] === chainId ||
+                    (item['功能链清单'] && item['功能链清单'].includes(chainId))
+                );
+                if (foundByName) {
+                    console.log('通过名称找到数据:', foundByName);
+                    return foundByName;
+                }
+            }
+
+            // 检查window.data对象
+            if (window.data && typeof window.data === 'object') {
+                console.log('在window.data中查找');
+                // 优先通过数字ID查找
+                if (isNumericId) {
+                    // 遍历data对象的所有属性查找匹配的ID
+                    for (const key in window.data) {
+                        const item = window.data[key];
+                        if (item && typeof item === 'object' && item.chainId === idNum) {
+                            console.log('通过chainId找到数据:', item);
+                            return item;
+                        }
+                    }
+                }
+
+                // 直接在data对象中查找
+                if (window.data[chainId]) {
+                    return window.data[chainId];
+                }
+
+                // 遍历data对象的所有属性查找匹配的功能链
+                for (const key in window.data) {
+                    const item = window.data[key];
+                    if (item && typeof item === 'object') {
+                        // 如果项有'功能链清单'属性并匹配
+                        if (item['功能链清单'] === chainId) {
+                            return item;
+                        }
+                        // 如果ID是部分匹配
+                        if (item['功能链清单'] && item['功能链清单'].includes(chainId)) {
+                            return item;
+                        }
+                    }
+                }
+            }
+
+            // 作为最后的尝试，检查是否有全局变量名与chainId相似
+            const globalKeys = Object.keys(window);
+            for (const key of globalKeys) {
+                if (key.includes('泛能源') || key.includes('En_泛能源')) {
+                    const item = window[key];
+                    if (item && typeof item === 'object') {
+                        if (item['功能链清单'] === chainId ||
+                            (item['功能链清单'] && item['功能链清单'].includes(chainId))) {
+                            return item;
+                        }
+                    }
+                }
+            }
+
+            console.log('未找到功能链数据:', chainId);
+            return null;
+        }
+
+        // 转换数据格式，适配页面显示需求
+        function transformChainData(rawData) {
+            if (!rawData) return null;
+
+            console.log('开始转换数据，原始数据:', rawData);
+
+            // 获取SOP值并确保是数字类型
+            const sopValue = parseInt(rawData['SOP'] || 0, 10);
+
+            // 为每个标签页内容准备默认数据，确保即使没有数据也能显示合理内容
+            const defaultTabContents = {
+                marketAnalysis: '该功能链当前拥有 ' + sopValue + ' 项测试实施能力(SOP)。\n业务需求分析：随着行业发展，对该功能链的测试和认证需求持续增长。目前已建立基础服务体系，能够满足市场基本需求。',
+                industryAnalysis: '行业相关技术正在持续发展中，该功能链已建立基础研究框架。\n技术发展现状：当前技术水平处于行业中上游，具备一定的创新能力。预计未来将在自动化测试和智能化认证方面取得突破。',
+                regulatoryAnalysis: '符合现有行业标准和监管要求，具备合规性。\n监管趋势：随着政策环境的不断完善，对测试标准和认证流程的要求日益严格，功能链需持续提升合规能力。',
+                constructionGoals: '提升测试能力，扩大资质覆盖范围，增强研发实力。\n短期目标：完善现有测试项目，提高服务质量；\n中长期目标：拓展新兴领域测试能力，成为行业标杆。',
+                implementation: '通过系统化的建设路径，逐步提升功能链整体能力。\n实施计划：分为基础设施建设、人才培养、技术研发和服务优化四个阶段，确保各项能力均衡发展。',
+                expectedLevel: '预计达到行业领先水平，提供全面的测试和验证服务。\n能力目标：测试项目覆盖率达到95%以上，认证资质满足国际标准，客户满意度保持在90%以上。'
+            };
+
+            return {
+                name: rawData['功能链清单'] || '',
+                chainId: rawData.chainId || '',
+                // SOP数和其他关键指标直接从rawData中获取
+                sopCount: sopValue,
+                cmaCount: rawData['资质授权覆盖(CMA)'] || 0,
+                dataCapability: rawData['数据管理能力'] || 0,
+                researchCapability: rawData['方法研究与分析'] || 0,
+                policySupport: rawData['政策及标准支撑能力'] || 0,
+                standardResearch: rawData['标准研究能力'] || 0,
+                equipmentCount: rawData['设备'] || 0,
+                // 动态计算成熟度等级
+                maturityLevel: calculateMaturityLevel(rawData),
+                updateTime: new Date().toISOString().split('T')[0], // 使用当前日期
+                // 标签页内容数据，优先使用rawData中的内容，否则使用默认数据
+                tabContents: {
+                    marketAnalysis: rawData['市场/业务需求分析'] || defaultTabContents.marketAnalysis,
+                    industryAnalysis: rawData['行业发展/技术发展现状分析'] || defaultTabContents.industryAnalysis,
+                    regulatoryAnalysis: rawData['政府/行业监管需求分析'] || defaultTabContents.regulatoryAnalysis,
+                    constructionGoals: rawData['功能链建设目标'] || defaultTabContents.constructionGoals,
+                    implementation: rawData['建设内容与实施途径'] || defaultTabContents.implementation,
+                    expectedLevel: rawData['预期达到的水平'] || defaultTabContents.expectedLevel
+                },
+                // 雷达图数据
+                radarData: (function () {
+                    // 行业水平（0-1范围，表示行业平均占比）
+                    // 根据不同能力维度设置合理的行业平均水平占比
+                    var industryData = [
+                        0.65 + (Math.random() * 0.1), // 测试实施能力（行业平均65%-75%）
+                        0.55 + (Math.random() * 0.15), // 资质授权覆盖(CMA)（行业平均55%-70%）
+                        0.70 + (Math.random() * 0.1), // 数据管理能力（行业平均70%-80%）
+                        0.60 + (Math.random() * 0.15), // 方法研究与分析（行业平均60%-75%）
+                        0.50 + (Math.random() * 0.15)  // 政策及标准支撑能力（行业平均50%-65%）
+                    ].map(value => Math.round(value * 100) / 100); // 保留两位小数
+
+                    // 实际水平数据（0-1范围），基于行业水平生成，通常略低于或接近行业水平
+                    var actualData = industryData.map(industryValue => {
+                        // 实际水平为行业水平的0.7-1.0倍
+                        var ratio = 0.7 + Math.random() * 0.3;
+                        var actualValue = industryValue * ratio;
+                        return Math.round(actualValue * 100) / 100; // 保留两位小数
+                    });
+
+                    // 目标水平数据（0-1范围），基于行业水平和实际水平生成，通常高于两者
+                    var targetData = industryData.map((industryValue, index) => {
+                        // 目标水平为max(行业水平的1.05-1.2倍, 实际水平的1.1-1.3倍)
+                        var target1 = industryValue * (1.05 + Math.random() * 0.15);
+                        var target2 = actualData[index] * (1.1 + Math.random() * 0.2);
+                        var targetValue = Math.max(target1, target2);
+                        // 确保不超过1.0
+                        return Math.min(Math.round(targetValue * 100) / 100, 1.0);
+                    });
+
+                    return {
+                        labels: ['测试实施能力', '资质授权覆盖(CMA)', '数据管理能力', '方法研究与分析', '政策及标准支撑能力'],
+                        datasets: [
+                            {
+                                label: '行业水平 (占比)',
+                                data: industryData,
+                                backgroundColor: 'rgba(0, 192, 192, 0.2)', // 青绿色背景
+                                borderColor: 'rgba(0, 192, 192, 1)',
+                                pointBackgroundColor: 'rgba(0, 192, 192, 1)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgba(0, 192, 192, 1)'
+                            },
+                            {
+                                label: '目标水平 (占比)',
+                                data: targetData,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)', // 红色背景
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+                            },
+                            {
+                                label: '实际水平 (占比)',
+                                data: actualData,
+                                backgroundColor: 'rgba(22, 93, 255, 0.2)', // 蓝色背景
+                                borderColor: 'rgba(22, 93, 255, 1)',
+                                pointBackgroundColor: 'rgba(22, 93, 255, 1)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgba(22, 93, 255, 1)'
+                            }
+                        ]
+                    };
+                })(),
+                // 柱状图数据 - 从JSON格式的SB字段读取数据
+                barData: function () {
+                    // 获取SB字段数据（JSON格式），如果不存在则使用空对象
+                    var sbData = rawData['SB'] || {};
+
+                    // 过滤出数值不为0的数据项
+                    var labels = [];
+                    var data = [];
+                    var backgroundColor = [];
+                    var borderColor = [];
+
+                    // 遍历SB对象的所有属性
+                    for (var key in sbData) {
+                        if (sbData.hasOwnProperty(key)) {
+                            var value = parseInt(sbData[key] || 0, 10);
+                            if (value > 0) {
+                                labels.push(key);
+                                data.push(value);
+                            }
+                        }
+                    }
+
+                    // 按数据值降序排序
+                    if (labels.length > 1) {
+                        // 创建索引数组并排序
+                        var indices = [];
+                        for (var i = 0; i < data.length; i++) {
+                            indices.push(i);
+                        }
+
+                        indices.sort(function (a, b) {
+                            return data[b] - data[a];
+                        });
+
+                        // 重新排列数据
+                        var sortedLabels = [];
+                        var sortedData = [];
+                        for (var i = 0; i < indices.length; i++) {
+                            sortedLabels.push(labels[indices[i]]);
+                            sortedData.push(data[indices[i]]);
+                        }
+                        labels = sortedLabels;
+                        data = sortedData;
+                    }
+
+                    // 为每个数据项生成彩虹色
+                    var totalItems = Math.max(labels.length - 1, 1);
+                    for (var i = 0; i < labels.length; i++) {
+                        // 使用HSL颜色模型生成彩虹色，色相从0到360度
+                        var hue = (i / totalItems) * 360; // 0-360度色相范围
+                        var saturation = 85; // 饱和度
+                        var lightness = 65; // 亮度
+
+                        // 生成半透明背景色
+                        backgroundColor.push('hsla(' + hue + ', ' + saturation + '%, ' + lightness + '%, 0.7)');
+                        // 生成不透明边框色
+                        borderColor.push('hsla(' + hue + ', ' + saturation + '%, ' + (lightness - 10) + '%, 1)');
+                    }
+
+                    // 返回处理后的柱状图数据
+                    return {
+                        labels: labels,
+                        datasets: [{
+                            label: '标准覆盖数量',
+                            data: data,
+                            backgroundColor: backgroundColor,
+                            borderColor: borderColor,
+                            borderWidth: 1
+                        }]
+                    };
+                }()
+            };
+        }
+
+        // 根据功能链数据动态计算成熟度等级
+        function calculateMaturityLevel(data) {
+            // 基于关键指标计算成熟度
+            const totalScore =
+                parseInt(data['SOP'] || 0, 10) +
+                parseInt(data['资质授权覆盖(CMA)'] || 0, 10) +
+                parseInt(data['标准研究能力'] || 0, 10) * 10;
+
+            if (totalScore >= 2000) return 'L5';
+            if (totalScore >= 1000) return 'L4';
+            if (totalScore >= 500) return 'L3';
+            if (totalScore >= 200) return 'L2';
+            return 'L1';
+        }
+
         // 初始化页面数据
         function initPageData() {
+            // 从URL获取功能链ID
             const chainId = getChainIdFromUrl();
-            // 支持通过ID或名称查找
-            let data = chainData[chainId];
-            
-            // 如果直接通过ID找不到，尝试匹配名称中包含该ID的功能链
+            console.log('尝试加载功能链数据:', chainId);
+
+            // 从 data.js 获取原始数据
+            const rawData = getChainDataFromDataJs(chainId);
+
+            // 转换数据格式
+            let data = transformChainData(rawData);
+
+            // 如果找不到数据，使用默认值
             if (!data) {
-                const foundKey = Object.keys(chainData).find(key => key.includes(chainId));
-                data = foundKey ? chainData[foundKey] : chainData['AD_智能驾驶系统功能链'];
+                data = {
+                    name: chainId,
+                    sopCount: 0,
+                    cmaCount: 0,
+                    dataCapability: 0,
+                    researchCapability: 0,
+                    policySupport: 0,
+                    standardResearch: 0,
+                    equipmentCount: 0,
+                    maturityLevel: 'L3',
+                    updateTime: '2025-06-30',
+                    tabContents: {
+                        marketAnalysis: '暂无数据',
+                        industryAnalysis: '暂无数据',
+                        regulatoryAnalysis: '暂无数据',
+                        constructionGoals: '暂无数据',
+                        implementation: '暂无数据',
+                        expectedLevel: '暂无数据'
+                    },
+                    radarData: {
+                        labels: ['测试实施能力', '资质授权覆盖(CMA)', '数据管理能力', '方法研究与分析', '政策及标准支撑能力'],
+                        datasets: [{
+                            label: '当前值',
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: 'rgba(22, 93, 255, 0.2)',
+                            borderColor: 'rgba(22, 93, 255, 1)',
+                            pointBackgroundColor: 'rgba(22, 93, 255, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(22, 93, 255, 1)'
+                        }]
+                    },
+                    barData: {
+                        labels: ['SOP', '资质授权覆盖(CMA)'],
+                        datasets: [{
+                            label: '数量',
+                            data: [0, 0],
+                            backgroundColor: [
+                                'rgba(22, 93, 255, 0.7)',
+                                'rgba(45, 212, 191, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(22, 93, 255, 1)',
+                                'rgba(45, 212, 191, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    }
+                };
             }
-            
-            // 如果仍然找不到，使用默认数据
-            if (!data) {
-                data = chainData['AD_智能驾驶系统功能链'];
-            }
-            
+
             // 更新页面文本内容
             document.getElementById('chain-name-breadcrumb').textContent = data.name;
             document.getElementById('chain-title').textContent = data.name;
             document.getElementById('chain-name-table').textContent = data.name;
+            // 确保SOP值是有效数字并正确显示，避免undefined或NaN
             document.getElementById('sop-count').textContent = data.sopCount;
             document.getElementById('cma-count').textContent = data.cmaCount;
             document.getElementById('data-capability').textContent = data.dataCapability;
@@ -478,35 +991,90 @@
             document.getElementById('policy-support').textContent = data.policySupport;
             document.getElementById('standard-research').textContent = data.standardResearch;
             document.getElementById('equipment-count').textContent = data.equipmentCount;
-            
+
             // 更新成熟度标签
             const maturityLabel = document.querySelector('.bg-green-100.text-green-800');
             if (maturityLabel) {
                 maturityLabel.innerHTML = `<i class="fa fa-line-chart mr-1"></i> 成熟度等级: ${data.maturityLevel}`;
             }
-            
+
             // 更新时间标签
             const timeLabel = document.querySelector('.bg-purple-100.text-purple-800');
             if (timeLabel) {
                 timeLabel.innerHTML = `<i class="fa fa-calendar mr-1"></i> 更新时间: ${data.updateTime}`;
             }
-            
+
+            // 更新标签页内容
+            updateTabContents(data.tabContents);
+
             // 初始化雷达图
             initRadarChart(data.radarData);
-            
+
             // 初始化柱状图
             initBarChart(data.barData);
         }
-        
+
+        // 更新标签页内容
+        function updateTabContents(tabContents) {
+            // 将文本内容转换为HTML格式（处理换行符等）
+            function formatContent(text) {
+                if (!text) return '<p>暂无数据</p>';
+
+                // 替换换行符为HTML换行
+                let formatted = text.replace(/\n/g, '<br>');
+
+                // 处理一级标题（以"一、"开头的行）
+                formatted = formatted.replace(/<br>一、/g, '<br><h3 class="text-lg font-semibold mt-4 mb-2">一、');
+                formatted = formatted.replace(/<br>二、/g, '<br><h3 class="text-lg font-semibold mt-4 mb-2">二、');
+                formatted = formatted.replace(/<br>三、/g, '<br><h3 class="text-lg font-semibold mt-4 mb-2">三、');
+                formatted = formatted.replace(/<br>四、/g, '<br><h3 class="text-lg font-semibold mt-4 mb-2">四、');
+                formatted = formatted.replace(/<br>五、/g, '<br><h3 class="text-lg font-semibold mt-4 mb-2">五、');
+
+                // 添加关闭标签
+                formatted = formatted.replace(/<h3/g, '</p><h3');
+                formatted = formatted.replace(/<\/h3>/g, '</h3><p>');
+
+                // 确保文本被段落标签包裹
+                if (!formatted.startsWith('<p>')) {
+                    formatted = '<p>' + formatted;
+                }
+                if (!formatted.endsWith('</p>')) {
+                    formatted = formatted + '</p>';
+                }
+
+                return formatted;
+            }
+
+            // 更新各个标签页的内容
+            if (document.getElementById('tab1')) {
+                document.getElementById('tab1').querySelector('.prose').innerHTML = formatContent(tabContents.marketAnalysis);
+            }
+            if (document.getElementById('tab2')) {
+                document.getElementById('tab2').querySelector('.prose').innerHTML = formatContent(tabContents.industryAnalysis);
+            }
+            if (document.getElementById('tab3')) {
+                document.getElementById('tab3').querySelector('.prose').innerHTML = formatContent(tabContents.regulatoryAnalysis);
+            }
+            if (document.getElementById('tab4')) {
+                document.getElementById('tab4').querySelector('.prose').innerHTML = formatContent(tabContents.constructionGoals);
+            }
+            if (document.getElementById('tab5')) {
+                document.getElementById('tab5').querySelector('.prose').innerHTML = formatContent(tabContents.implementation);
+            }
+            if (document.getElementById('tab6')) {
+                document.getElementById('tab6').querySelector('.prose').innerHTML = formatContent(tabContents.expectedLevel);
+            }
+        }
+
         // 初始化雷达图
         function initRadarChart(data) {
             const ctx = document.getElementById('radarChart').getContext('2d');
-            
+
             // 销毁已存在的图表
             if (window.radarChartInstance) {
                 window.radarChartInstance.destroy();
             }
-            
+
             // 创建新图表
             window.radarChartInstance = new Chart(ctx, {
                 type: 'radar',
@@ -521,7 +1089,7 @@
                                 color: 'rgba(0, 0, 0, 0.1)'
                             },
                             suggestedMin: 0,
-                            suggestedMax: 60,
+                            suggestedMax: 1,
                             ticks: {
                                 stepSize: 10,
                                 backdropColor: 'transparent',
@@ -537,7 +1105,15 @@
                     },
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
                         },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -548,16 +1124,16 @@
                 }
             });
         }
-        
+
         // 初始化柱状图
         function initBarChart(data) {
             const ctx = document.getElementById('barChart').getContext('2d');
-            
+
             // 销毁已存在的图表
             if (window.barChartInstance) {
                 window.barChartInstance.destroy();
             }
-            
+
             // 创建新图表
             window.barChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -597,8 +1173,8 @@
                             padding: 10,
                             cornerRadius: 4,
                             callbacks: {
-                                label: function(context) {
-                                    return `标准数量: ${context.raw}`;
+                                label: function (context) {
+                                    return `数量: ${context.raw}`;
                                 }
                             }
                         }
@@ -607,19 +1183,29 @@
                 }
             });
         }
-        
+
         // 页面加载完成后初始化数据
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initPageData();
-            
+            setupTabNavigation(); // 初始化标签页导航
+
             // 监听窗口大小变化，重新渲染图表
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', function () {
                 const chainId = getChainIdFromUrl();
-                const data = chainData[chainId] || chainData['AD_智能驾驶系统功能链'];
-                initRadarChart(data.radarData);
-                initBarChart(data.barData);
+                console.log('窗口大小变化，重新加载功能链数据:', chainId);
+
+                // 重新获取数据并渲染图表
+                const rawData = getChainDataFromDataJs(chainId);
+                console.log('窗口大小变化，重新获取的数据:', rawData);
+                const data = transformChainData(rawData);
+
+                if (data) {
+                    initRadarChart(data.radarData);
+                    initBarChart(data.barData);
+                }
             });
         });
     </script>
 </body>
+
 </html>
