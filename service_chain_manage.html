@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务链管理 - 功能链管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        info: '#0ea5e9',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .shadow-card {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .hover-scale {
+                transition: transform 0.2s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.02);
+            }
+        }
+    </style>
+    
+    <style>
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* 下拉框搜索样式 */
+        .dropdown-search:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+        .dropdown-item.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <!-- 顶部导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-xl font-bold text-primary">
+                        <i class="fa fa-tasks mr-2"></i>服务链管理
+                    </div>
+                </div>
+                
+                <!-- 导航菜单 - 桌面端 -->
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html" class="nav-item py-1 px-2 hover:text-primary transition-colors"><i class="fa fa-home mr-1"></i> 首页</a>
+                </nav>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="md:hidden text-gray-600 hover:text-primary transition-colors" id="mobile-menu-btn" aria-label="菜单">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white border-t animate-fadeIn" id="mobile-menu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i class="fa fa-home mr-2"></i> 首页</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow container mx-auto px-4 pt-24 pb-6">
+        <!-- 页面标题 -->
+        <div class="mb-6 animate-fadeIn">
+            <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-900">服务链管理</h2>
+            <p class="text-gray-500 mt-1">管理服务链的增删改查，支持标准、能力、SOP、实验室等信息配置</p>
+        </div>
+
+        <!-- 添加服务链表单 -->
+        <div class="bg-white rounded-xl shadow-card p-6 mb-6 animate-fadeIn" style="animation-delay: 0.1s">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">添加服务链</h3>
+            <form id="addServiceChainForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 基础信息 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">服务链名称</label>
+                    <input type="text" id="chainName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">服务链代码</label>
+                    <input type="text" id="chainCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" required>
+                </div>
+
+                <!-- 下拉选择器 - 标准 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">标准</label>
+                    <div class="relative" id="standardDropdownContainer">
+                        <input type="text" id="standardSearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索标准..." readonly>
+                        <input type="hidden" id="selectedStandard">
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fa fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <!-- 下拉菜单 -->
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="standardDropdown">
+                            <div class="p-2 border-b border-gray-200">
+                                <input type="text" id="standardInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                            </div>
+                            <!-- 标准列表 -->
+                            <div id="standardList"></div>
+                            <div class="p-2 border-t border-gray-200">
+                                <button type="button" id="addNewStandard" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                    <i class="fa fa-plus mr-2"></i> 添加新标准
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下拉选择器 - 能力 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">能力</label>
+                    <div class="relative" id="abilityDropdownContainer">
+                        <input type="text" id="abilitySearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索能力..." readonly>
+                        <input type="hidden" id="selectedAbility">
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fa fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <!-- 下拉菜单 -->
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="abilityDropdown">
+                            <div class="p-2 border-b border-gray-200">
+                                <input type="text" id="abilityInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                            </div>
+                            <!-- 能力列表 -->
+                            <div id="abilityList"></div>
+                            <div class="p-2 border-t border-gray-200">
+                                <button type="button" id="addNewAbility" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                    <i class="fa fa-plus mr-2"></i> 添加新能力
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下拉选择器 - SOP -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">SOP</label>
+                    <div class="relative" id="sopDropdownContainer">
+                        <input type="text" id="sopSearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索SOP..." readonly>
+                        <input type="hidden" id="selectedSOP">
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fa fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <!-- 下拉菜单 -->
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="sopDropdown">
+                            <div class="p-2 border-b border-gray-200">
+                                <input type="text" id="sopInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                            </div>
+                            <!-- SOP列表 -->
+                            <div id="sopList"></div>
+                            <div class="p-2 border-t border-gray-200">
+                                <button type="button" id="addNewSOP" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                    <i class="fa fa-plus mr-2"></i> 添加新SOP
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下拉选择器 - 实验室 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">实验室</label>
+                    <div class="relative" id="labDropdownContainer">
+                        <input type="text" id="labSearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索实验室..." readonly>
+                        <input type="hidden" id="selectedLab">
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <i class="fa fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <!-- 下拉菜单 -->
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="labDropdown">
+                            <div class="p-2 border-b border-gray-200">
+                                <input type="text" id="labInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                            </div>
+                            <!-- 实验室列表 -->
+                            <div id="labList"></div>
+                            <div class="p-2 border-t border-gray-200">
+                                <button type="button" id="addNewLab" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                    <i class="fa fa-plus mr-2"></i> 添加新实验室
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 备注信息 -->
+                <div class="space-y-2 md:col-span-2 lg:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700">备注信息</label>
+                    <textarea id="chainRemark" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"></textarea>
+                </div>
+            </form>
+
+            <!-- 操作按钮 -->
+            <div class="mt-6 flex justify-end space-x-4">
+                <button id="resetForm" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                    重置
+                </button>
+                <button id="submitForm" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center">
+                    <i class="fa fa-plus mr-2"></i> 添加服务链
+                </button>
+            </div>
+        </div>
+
+        <!-- 服务链列表 -->
+        <div class="bg-white rounded-xl shadow-card p-6 animate-fadeIn" style="animation-delay: 0.2s">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">服务链列表</h3>
+                <div class="relative">
+                    <input type="text" id="chainSearch" class="w-full md:w-64 px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="搜索服务链...">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <i class="fa fa-search"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务链表格 -->
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-primary/5 to-gray-50">
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-hashtag mr-2 text-primary"></i>
+                                    序号
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-link mr-2 text-primary"></i>
+                                    服务链名称
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-code mr-2 text-primary"></i>
+                                    服务链代码
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-book mr-2 text-primary"></i>
+                                    标准
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-tasks mr-2 text-primary"></i>
+                                    能力
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-file-text-o mr-2 text-primary"></i>
+                                    SOP
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-flask mr-2 text-primary"></i>
+                                    实验室
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-calendar-plus-o mr-2 text-primary"></i>
+                                    创建时间
+                                </div>
+                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <i class="fa fa-cog mr-2 text-primary"></i>
+                                    操作
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceChainTable" class="bg-white divide-y divide-gray-200">
+                        <!-- 服务链数据将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="mt-6 flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    显示 <span id="showingStart">1</span> 至 <span id="showingEnd">10</span> 条，共 <span id="totalCount">0</span> 条记录
+                </div>
+                <div class="flex space-x-2">
+                    <button id="prevPage" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button id="nextPage" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新增项模态框 -->
+    <div id="newItemModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+            <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">添加新项</h3>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-500">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-5">
+                <input type="hidden" id="modalType">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">名称</label>
+                        <input type="text" id="newItemName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">描述</label>
+                        <textarea id="newItemDesc" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancelModal" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    取消
+                </button>
+                <button id="confirmModal" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                    确认
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+            <div class="p-5 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">确认删除</h3>
+            </div>
+            <div class="p-5">
+                <p class="text-gray-700">确定要删除这条服务链吗？此操作不可撤销。</p>
+                <input type="hidden" id="deleteChainId">
+            </div>
+            <div class="p-5 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancelDelete" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    取消
+                </button>
+                <button id="confirmDelete" class="px-4 py-2 bg-danger text-white rounded-md hover:bg-danger/90 transition-colors">
+                    删除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 模拟数据
+        const mockData = {
+            standards: [
+                { id: 1, name: 'GB/T 20234-2015 电动汽车传导充电用连接装置', code: 'GB/T 20234-2015' },
+                { id: 2, name: 'GB/T 18487-2015 电动汽车传导充电系统', code: 'GB/T 18487-2015' },
+                { id: 3, name: 'GB/T 31467-2015 电动汽车用锂离子动力蓄电池包和系统', code: 'GB/T 31467-2015' },
+                { id: 4, name: 'GB/T 19596-2017 电动汽车术语', code: 'GB/T 19596-2017' },
+                { id: 5, name: 'GB/T 34590-2017 电动汽车用电池管理系统技术条件', code: 'GB/T 34590-2017' }
+            ],
+            abilities: [
+                { id: 1, name: '充电接口测试能力', code: 'ABILITY-001' },
+                { id: 2, name: '动力电池性能测试能力', code: 'ABILITY-002' },
+                { id: 3, name: '电池安全测试能力', code: 'ABILITY-003' },
+                { id: 4, name: '电磁兼容测试能力', code: 'ABILITY-004' },
+                { id: 5, name: '能源转换效率测试能力', code: 'ABILITY-005' }
+            ],
+            sops: [
+                { id: 1, name: '电动汽车充电接口测试SOP', code: 'SOP-001' },
+                { id: 2, name: '动力电池系统性能测试SOP', code: 'SOP-002' },
+                { id: 3, name: '电池安全性能测试SOP', code: 'SOP-003' },
+                { id: 4, name: '电磁兼容测试SOP', code: 'SOP-004' },
+                { id: 5, name: '充电系统效率测试SOP', code: 'SOP-005' }
+            ],
+            labs: [
+                { id: 1, name: '氢能与燃料电池检测研究实验室', code: 'LAB-001' },
+                { id: 2, name: '新能源汽车电池检测实验室', code: 'LAB-002' },
+                { id: 3, name: '电磁兼容测试实验室', code: 'LAB-003' },
+                { id: 4, name: '充电设备检测实验室', code: 'LAB-004' },
+                { id: 5, name: '智能电网测试实验室', code: 'LAB-005' }
+            ],
+            serviceChains: [
+                {
+                    id: 1,
+                    name: '电动汽车充电接口测试服务链',
+                    code: 'SERVICE-CHAIN-001',
+                    standard: { id: 1, name: 'GB/T 20234-2015 电动汽车传导充电用连接装置' },
+                    ability: { id: 1, name: '充电接口测试能力' },
+                    sop: { id: 1, name: '电动汽车充电接口测试SOP' },
+                    lab: { id: 4, name: '充电设备检测实验室' },
+                    remark: '专注于充电接口的安全性和互操作性测试',
+                    createTime: '2024-01-15 10:30:00'
+                },
+                {
+                    id: 2,
+                    name: '动力电池性能测试服务链',
+                    code: 'SERVICE-CHAIN-002',
+                    standard: { id: 3, name: 'GB/T 31467-2015 电动汽车用锂离子动力蓄电池包和系统' },
+                    ability: { id: 2, name: '动力电池性能测试能力' },
+                    sop: { id: 2, name: '动力电池系统性能测试SOP' },
+                    lab: { id: 2, name: '新能源汽车电池检测实验室' },
+                    remark: '提供动力电池全生命周期性能测试',
+                    createTime: '2024-02-20 14:20:00'
+                }
+            ]
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化下拉框数据
+            initDropdownData();
+            
+            // 初始化服务链列表
+            renderServiceChainTable();
+            
+            // 绑定事件
+            bindEvents();
+        });
+
+        // 初始化下拉框数据
+        function initDropdownData() {
+            // 标准下拉框
+            renderDropdownItems('standard', mockData.standards);
+            
+            // 能力下拉框
+            renderDropdownItems('ability', mockData.abilities);
+            
+            // SOP下拉框
+            renderDropdownItems('sop', mockData.sops);
+            
+            // 实验室下拉框
+            renderDropdownItems('lab', mockData.labs);
+        }
+
+        // 渲染下拉框选项
+        function renderDropdownItems(type, data) {
+            const listElement = document.getElementById(`${type}List`);
+            listElement.innerHTML = '';
+            
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer dropdown-item';
+                div.dataset.id = item.id;
+                // 统一显示名称，不显示版本号
+                div.textContent = item.name;
+                
+                div.addEventListener('click', function() {
+                    const searchInput = document.getElementById(`${type}Search`);
+                    const selectedInput = document.getElementById(`selected${capitalizeFirst(type)}`);
+                    const dropdown = document.getElementById(`${type}Dropdown`);
+                    
+                    if (searchInput) {
+                        // 统一设置搜索框值为名称
+                        searchInput.value = item.name;
+                    }
+                    
+                    if (selectedInput) {
+                        // 设置选中值
+                        selectedInput.value = item.id;
+                        // 添加调试信息
+                        console.log(`设置了${type}的选中值:`, selectedInput.value);
+                    }
+                    
+                    if (dropdown) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+                
+                listElement.appendChild(div);
+            });
+        }
+
+        // 首字母大写
+        function capitalizeFirst(str) {
+              if (str === 'sop') return 'SOP';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+
+        }
+
+        // 渲染服务链表格
+        function renderServiceChainTable() {
+            const tableBody = document.getElementById('serviceChainTable');
+            tableBody.innerHTML = '';
+            
+            if (mockData.serviceChains.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="9" class="px-4 py-12 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <i class="fa fa-folder-open-o text-4xl mb-3 text-gray-300"></i>
+                            <p>暂无服务链数据</p>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+            
+            mockData.serviceChains.forEach((chain, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition-colors';
+                row.innerHTML = `
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${chain.name}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${chain.code}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${chain.standard.name}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${chain.ability.name}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${chain.sop.name}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${chain.lab.name}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${chain.createTime}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="flex space-x-2">
+                            <button class="text-primary hover:text-primary/80 transition-colors edit-btn" data-id="${chain.id}">
+                                <i class="fa fa-pencil mr-1"></i> 编辑
+                            </button>
+                            <button class="text-danger hover:text-danger/80 transition-colors delete-btn" data-id="${chain.id}">
+                                <i class="fa fa-trash mr-1"></i> 删除
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // 更新分页信息
+            document.getElementById('totalCount').textContent = mockData.serviceChains.length;
+            document.getElementById('showingEnd').textContent = Math.min(10, mockData.serviceChains.length);
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 移动端菜单
+            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+            
+            // 下拉框点击事件
+            const dropdownTypes = ['standard', 'ability', 'sop', 'lab'];
+            dropdownTypes.forEach(type => {
+                // 点击输入框显示下拉菜单
+                const searchInput = document.getElementById(`${type}Search`);
+                if (searchInput) {
+                    searchInput.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeAllDropdowns();
+                        const dropdown = document.getElementById(`${type}Dropdown`);
+                        if (dropdown) {
+                            dropdown.classList.remove('hidden');
+                        }
+                    });
+                }
+                
+                // 下拉框搜索
+                const internalSearch = document.getElementById(`${type}InternalSearch`);
+                if (internalSearch) {
+                    internalSearch.addEventListener('input', function() {
+                        const searchTerm = this.value.toLowerCase();
+                        const items = document.querySelectorAll(`#${type}List .dropdown-item`);
+                        
+                        items.forEach(item => {
+                            if (item.textContent.toLowerCase().includes(searchTerm)) {
+                                item.style.display = 'block';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+                    });
+                }
+                
+                // 添加新项按钮
+                const addButton = document.getElementById(`addNew${capitalizeFirst(type)}`);
+                const modalTypeInput = document.getElementById('modalType');
+                const modalTitle = document.getElementById('modalTitle');
+                const newItemNameInput = document.getElementById('newItemName');
+                const newItemDescInput = document.getElementById('newItemDesc');
+                const newItemModal = document.getElementById('newItemModal');
+                
+                if (addButton) {
+                    addButton.addEventListener('click', function() {
+                        if (modalTypeInput) modalTypeInput.value = type;
+                        if (modalTitle) modalTitle.textContent = `添加新${getTypeName(type)}`;
+                        if (newItemNameInput) newItemNameInput.value = '';
+                        if (newItemDescInput) newItemDescInput.value = '';
+                        if (newItemModal) newItemModal.classList.remove('hidden');
+                    });
+                }
+            });
+            
+            // 关闭所有下拉框
+            function closeAllDropdowns() {
+                dropdownTypes.forEach(type => {
+                    document.getElementById(`${type}Dropdown`).classList.add('hidden');
+                });
+            }
+            
+            // 点击页面其他地方关闭下拉框
+            document.addEventListener('click', function() {
+                closeAllDropdowns();
+            });
+            
+            // 阻止下拉框内部点击事件冒泡
+            dropdownTypes.forEach(type => {
+                document.getElementById(`${type}Dropdown`).addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            // 表单重置
+            document.getElementById('resetForm').addEventListener('click', function() {
+                document.getElementById('addServiceChainForm').reset();
+                dropdownTypes.forEach(type => {
+                    document.getElementById(`${type}Search`).value = '';
+                    document.getElementById(`selected${capitalizeFirst(type)}`).value = '';
+                });
+            });
+            
+            // 表单提交
+            document.getElementById('submitForm').addEventListener('click', function() {
+                // 表单验证
+                const chainName = document.getElementById('chainName').value.trim();
+                const chainCode = document.getElementById('chainCode').value.trim();
+                const selectedStandardId = document.getElementById('selectedStandard').value;
+                const selectedAbilityId = document.getElementById('selectedAbility').value;
+                const selectedSOPId = document.getElementById('selectedSOP').value;
+                const selectedLabId = document.getElementById('selectedLab').value;
+                
+                // 添加调试信息
+                console.log('表单提交时的选中值：');
+                console.log('SOP ID:', selectedSOPId);
+                console.log('标准 ID:', selectedStandardId);
+                console.log('能力 ID:', selectedAbilityId);
+                console.log('实验室 ID:', selectedLabId);
+                
+                if (!chainName) {
+                    alert('请输入服务链名称');
+                    return;
+                }
+                if (!chainCode) {
+                    alert('请输入服务链代码');
+                    return;
+                }
+                if (!selectedStandardId) {
+                    alert('请选择标准');
+                    return;
+                }
+                if (!selectedAbilityId) {
+                    alert('请选择能力');
+                    return;
+                }
+                if (!selectedSOPId) {
+                    alert('请选择SOP');
+                    return;
+                }
+                if (!selectedLabId) {
+                    alert('请选择实验室');
+                    return;
+                }
+                
+                // 创建新服务链
+                const newChain = {
+                    id: mockData.serviceChains.length + 1,
+                    name: chainName,
+                    code: chainCode,
+                    standard: mockData.standards.find(s => String(s.id) === selectedStandardId),
+                    ability: mockData.abilities.find(a => String(a.id) === selectedAbilityId),
+                    sop: mockData.sops.find(s => String(s.id) === selectedSOPId),
+                    lab: mockData.labs.find(l => String(l.id) === selectedLabId),
+                    remark: document.getElementById('chainRemark').value.trim(),
+                    createTime: new Date().toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    }).replace(/\//g, '-')
+                };
+                
+                console.log('创建的新服务链:', newChain);
+                
+                // 添加到数据中
+                mockData.serviceChains.push(newChain);
+                console.log('服务链添加成功，当前服务链列表:', mockData.serviceChains);
+                
+                // 重置表单
+                document.getElementById('addServiceChainForm').reset();
+                dropdownTypes.forEach(type => {
+                    const searchInput = document.getElementById(`${type}Search`);
+                    const selectedInput = document.getElementById(`selected${capitalizeFirst(type)}`);
+                    if (searchInput) searchInput.value = '';
+                    if (selectedInput) selectedInput.value = '';
+                });
+                
+                // 重新渲染表格
+                renderServiceChainTable();
+                
+                // 显示成功提示
+                alert('服务链添加成功！');
+            });
+            
+            // 模态框操作
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('newItemModal').classList.add('hidden');
+            });
+            
+            document.getElementById('cancelModal').addEventListener('click', function() {
+                document.getElementById('newItemModal').classList.add('hidden');
+            });
+            
+            document.getElementById('confirmModal').addEventListener('click', function() {
+                const type = document.getElementById('modalType').value;
+                const name = document.getElementById('newItemName').value.trim();
+                const desc = document.getElementById('newItemDesc').value.trim();
+                
+                if (!name) {
+                    alert(`请输入${getTypeName(type)}名称`);
+                    return;
+                }
+                
+                // 添加新项到对应数组
+                const dataArray = mockData[`${type}s`] || [];
+                const newItem = {
+                    id: dataArray.length + 1,
+                    name: name,
+                    code: `${type.toUpperCase()}-${String(dataArray.length + 1).padStart(3, '0')}`,
+                    description: desc
+                };
+                
+               
+                
+                dataArray.push(newItem);
+                console.log(`添加了新的${type}:`, newItem);
+                
+                // 重新渲染下拉框
+                renderDropdownItems(type, dataArray);
+                
+                // 自动选择新添加的项
+                const searchInput = document.getElementById(`${type}Search`);
+                const selectedInput = document.getElementById(`selected${capitalizeFirst(type)}`);
+                
+                if (searchInput && selectedInput) {
+                    searchInput.value = newItem.name;
+                    selectedInput.value = newItem.id;
+                    console.log(`自动选择了新添加的${type}项:`, newItem.name, 'ID:', newItem.id);
+                }
+
+                // 关闭模态框
+                document.getElementById('newItemModal').classList.add('hidden');
+                
+                // 显示成功提示
+                alert(`${getTypeName(type)}添加成功！`);
+            });
+            
+            // 删除操作
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.delete-btn')) {
+                    const btn = e.target.closest('.delete-btn');
+                    const chainId = btn.dataset.id;
+                    document.getElementById('deleteChainId').value = chainId;
+                    document.getElementById('deleteConfirmModal').classList.remove('hidden');
+                }
+            });
+            
+            document.getElementById('cancelDelete').addEventListener('click', function() {
+                document.getElementById('deleteConfirmModal').classList.add('hidden');
+            });
+            
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                const chainId = document.getElementById('deleteChainId').value;
+                const index = mockData.serviceChains.findIndex(c => c.id == chainId);
+                
+                if (index !== -1) {
+                    mockData.serviceChains.splice(index, 1);
+                    renderServiceChainTable();
+                }
+                
+                document.getElementById('deleteConfirmModal').classList.add('hidden');
+                alert('服务链删除成功！');
+            });
+            
+            // 搜索功能
+            document.getElementById('chainSearch').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#serviceChainTable tr');
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    let match = false;
+                    
+                    cells.forEach((cell, index) => {
+                        if (index >= 1 && index <= 3) { // 搜索名称、代码、标准列
+                            if (cell.textContent.toLowerCase().includes(searchTerm)) {
+                                match = true;
+                            }
+                        }
+                    });
+                    
+                    row.style.display = match || searchTerm === '' ? '' : 'none';
+                });
+            });
+            
+            // 登出功能
+            window.logout = function() {
+                alert('登出成功！');
+                window.location.href = 'login.html';
+            };
+        }
+
+        // 获取类型名称
+        function getTypeName(type) {
+            const typeMap = {
+                'standard': '标准',
+                'ability': '能力',
+                'sop': 'SOP',
+                'lab': '实验室'
+            };
+            return typeMap[type] || type;
+        }
+    </script>
+</body>
+</html>
