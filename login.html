@@ -342,7 +342,7 @@
 
                 // 账号密码验证（硬编码）
                 setTimeout(() => {
-                    if (username === 'smvic' && password === '123456') {
+                    if (username === 'smvic' && password === 'ptd007@smvic') {
                         // 登录成功，保存登录状态到localStorage
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('username', username);
@@ -356,7 +356,7 @@
                         setTimeout(() => {
                             window.location.href = 'index.html';
                         }, 1000);
-                    } else if (username === 'en' && password === '123456') {
+                    } else if (username === 'en' && password === 'ptd007@smvic') {
                         // 特殊账户：跳转到服务链详情 id=1
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('username', username);
@@ -391,7 +391,7 @@
             document.addEventListener('DOMContentLoaded', function () {
                 // 可选：自动填充测试账号
                 // document.getElementById('username').value = 'smvic';
-                // document.getElementById('password').value = '123456';
+                // document.getElementById('password').value = 'ptd007@smvic';
 
                 // 为输入框添加键盘事件
                 document.getElementById('username').addEventListener('keypress', function (e) {
