@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考核情况填报 - 功能链管理系统</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CBCB',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        gray: {
+                            50: '#F7F8FA',
+                            100: '#F2F3F5',
+                            200: '#E5E6EB',
+                            300: '#C9CDD4',
+                            400: '#86909C',
+                            500: '#4E5969',
+                            600: '#272E3B',
+                            700: '#1D2129',
+                        },
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                    },
+                },
+            }
+        }
+    </script>
+
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #F7F8FA;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* 表格样式 */
+        .assessment-table th {
+            background-color: #F7F8FA;
+            font-weight: 600;
+            color: #4E5969;
+        }
+
+        .assessment-table td {
+            border-top: 1px solid #E5E6EB;
+        }
+
+        /* 侧边栏滚动条样式 */
+        #sidebar {
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #C9CDD4 #F7F8FA;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #F7F8FA;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background-color: #C9CDD4;
+            border-radius: 20px;
+        }
+
+        /* 文件上传样式 */
+        .file-upload-label {
+            border: 2px dashed #C9CDD4;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: #165DFF;
+            background-color: #F0F5FF;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 左侧菜单栏 -->
+    <aside id="sidebar"
+        class="fixed left-0 top-0 h-full w-64 bg-white shadow-md z-40 transition-all duration-300 transform">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-car text-primary text-2xl"></i>
+                <h1 class="text-lg font-semibold text-gray-900">功能链管理系统</h1>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-primary">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="p-4">
+            <!-- 主菜单 - 首页放在最上面 -->
+            <div class="space-y-1 mb-4">
+                <a href="index.html"
+                    class="flex items-center py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fa fa-home mr-3 text-gray-500"></i>
+                    <span>首页</span>
+                </a>
+            </div>
+
+            <!-- 申报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-file-text-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">申报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-bullseye mr-3 text-gray-400"></i>目标
+                    </a>
+                    <a href="core_members.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-users mr-3 text-gray-400"></i>核心成员填报
+                    </a>
+                </div>
+            </div>
+
+            <!-- 中期工作计划填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-calendar-check-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">中期工作计划填报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="service_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-sitemap mr-3 text-gray-400"></i>服务链分析
+                    </a>
+                    <a href="tool_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-wrench mr-3 text-gray-400"></i>工具链分析
+                    </a>
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-line-chart mr-3 text-gray-400"></i>业务推广计划
+                    </a>
+                    <a href="project_planning.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-building-o mr-3 text-gray-400"></i>建设计划
+                    </a>
+                </div>
+            </div>
+
+            <!-- 考核情况填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-tasks mr-3 text-gray-500"></i>
+                        <span class="font-medium">考核情况填报</span>
+                    </span>
+                    <i
+                        class="fa fa-angle-down transition-transform duration-300 text-gray-500 transform rotate-180"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu">
+                    <a href="assessment.html"
+                        class="block py-2 px-3 text-primary bg-primary/5 rounded-md transition-colors">
+                        <i class="fa fa-check-square-o mr-3 text-primary"></i>考核内容填报
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- 顶部导航栏 -->
+    <header class="fixed top-0 left-64 right-0 bg-white shadow-sm z-30 transition-all duration-300">
+        <div class="w-full max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar" class="text-gray-500 hover:text-primary mr-4">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500">考核内容填报</span>
+                        <i class="fa fa-angle-right text-gray-400 text-xs"></i>
+                        <span class="text-primary font-medium">考核内容填报</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- 未读信息 -->
+                    <div class="relative">
+                        <button
+                            class="p-2 text-gray-600 hover:text-primary rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="fa fa-bell text-xl"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+                        </button>
+                    </div>
+
+                    <!-- 当前登录用户 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:text-primary">
+                        <img src="logo.png" alt="用户头像" class="w-8 h-8 rounded-full border-2 border-gray-200">
+                        <span class="text-gray-700">张三</span>
+                    </div>
+
+                    <!-- 登出按钮 -->
+                    <button onclick="logout()"
+                        class="flex items-center space-x-1 px-3 py-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-md transition-colors">
+                        <i class="fa fa-sign-out"></i>
+                        <span>登出</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white border-t animate-fadeIn" id="mobile-menu">
+            <div class="w-full max-w-7xl mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i
+                        class="fa fa-home mr-2"></i> 首页</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="flex-1 ml-64 pt-16 transition-all duration-300">
+        <div class="container mx-auto p-6">
+            <!-- 页面标题 -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2">考核内容填报</h2>
+                <p class="text-gray-500">请填写以下考核相关信息，所有带 <span class="text-danger">*</span> 的字段为必填项</p>
+            </div>
+
+            <form id="assessment-form">
+                <!-- 设备清单 -->
+                <div class="bg-white rounded-lg shadow-card mb-8 p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">设备清单</h3>
+                        <button type="button" id="add-equipment" class="flex items-center text-primary hover:underline">
+                            <i class="fa fa-plus-circle mr-1"></i> 新增设备
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="assessment-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-4 text-left">设备名称</th>
+                                    <th class="py-3 px-4 text-left">型号</th>
+                                    <th class="py-3 px-4 text-left">数量</th>
+                                    <th class="py-3 px-4 text-left">状态</th>
+                                    <th class="py-3 px-4 text-left">备注</th>
+                                    <th class="py-3 px-4 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="equipment-table-body">
+                                <tr class="equipment-row">
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="equipmentName[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入设备名称">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="equipmentModel[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入型号" value="HFC-TEST-2000">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="number" name="equipmentQuantity[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入数量" min="0" value="1">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <select name="equipmentStatus[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                            <option value="">请选择状态</option>
+                                            <option value="正常" selected>正常</option>
+                                            <option value="维修中">维修中</option>
+                                            <option value="故障">故障</option>
+                                            <option value="新增">新增</option>
+                                        </select>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="equipmentRemark[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入备注" value="用于氢燃料电池性能测试">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button type="button" class="delete-equipment text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="equipment-row">
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="equipmentName[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入设备名称" value="氢气纯化设备">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="equipmentModel[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入型号" value="HP-500">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="number" name="equipmentQuantity[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入数量" min="0" value="2">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <select name="equipmentStatus[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                            <option value="">请选择状态</option>
+                                            <option value="正常">正常</option>
+                                            <option value="维修中">维修中</option>
+                                            <option value="故障">故障</option>
+                                            <option value="新增" selected>新增</option>
+                                        </select>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="equipmentRemark[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入备注" value="纯度可达99.999%">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button type="button" class="delete-equipment text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SOP清单 -->
+                <div class="bg-white rounded-lg shadow-card mb-8 p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">SOP清单</h3>
+                        <button type="button" id="add-sop" class="flex items-center text-primary hover:underline">
+                            <i class="fa fa-plus-circle mr-1"></i> 新增SOP
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="assessment-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-4 text-left">SOP名称</th>
+                                    <th class="py-3 px-4 text-left">版本</th>
+                                    <th class="py-3 px-4 text-left">是否新增</th>
+                                    <th class="py-3 px-4 text-left">备注</th>
+                                    <th class="py-3 px-4 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sop-table-body">
+                                <tr class="sop-row">
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="sopName[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入SOP名称" value="氢燃料电池系统启动与关闭操作规范">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="sopVersion[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入版本" value="V1.0">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <select name="sopIsNew[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                            <option value="">请选择</option>
+                                            <option value="是" selected>是</option>
+                                            <option value="否">否</option>
+                                        </select>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="sopRemark[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入备注" value="确保燃料电池安全启停">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button type="button" class="delete-sop text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="sop-row">
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="sopName[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入SOP名称" value="氢气泄漏检测与应急处置流程">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="sopVersion[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入版本" value="V2.1">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <select name="sopIsNew[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                            <option value="">请选择</option>
+                                            <option value="是">是</option>
+                                            <option value="否" selected>否</option>
+                                        </select>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <input type="text" name="sopRemark[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="请输入备注" value="基于最新安全标准更新">
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button type="button" class="delete-sop text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-gray-50 rounded-md">
+                        <p class="text-gray-600">新增的SOP数量：<span id="new-sop-count"
+                                class="font-semibold text-primary">0</span></p>
+                    </div>
+                </div>
+
+                <!-- 知识产权 -->
+                <div class="bg-white rounded-lg shadow-card mb-8 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">知识产权</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="papers-count" class="block text-sm font-medium text-gray-700 mb-1">论文数量 <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" id="papers-count" name="papersCount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                min="0" required value="3">
+                        </div>
+                        <div>
+                            <label for="patents-count" class="block text-sm font-medium text-gray-700 mb-1">专利数量 <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" id="patents-count" name="patentsCount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                min="0" required value="2">
+                        </div>
+                        <div>
+                            <label for="software-copyrights-count"
+                                class="block text-sm font-medium text-gray-700 mb-1">软著数量 <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" id="software-copyrights-count" name="softwareCopyrightsCount"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                min="0" required value="1">
+                        </div>
+                    </div>
+
+                    <!-- 知识产权详情 -->
+                    <div class="mt-6 space-y-6">
+                        <!-- 论文详情 -->
+                        <div>
+                            <h4 class="text-base font-medium text-gray-900 mb-3">论文详情</h4>
+                            <div id="papers-container">
+                                <div class="paper-item border border-gray-200 rounded-md p-4 mb-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">论文标题</label>
+                                            <input type="text" name="paperTitle[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入论文标题" value="高性能氢燃料电池催化剂制备与性能研究">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">发表期刊/会议</label>
+                                            <input type="text" name="paperJournal[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入发表期刊/会议" value="氢能科学与技术学报">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="delete-paper text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="paper-item border border-gray-200 rounded-md p-4 mb-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">论文标题</label>
+                                            <input type="text" name="paperTitle[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入论文标题" value="氢能存储技术进展与应用前景">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">发表期刊/会议</label>
+                                            <input type="text" name="paperJournal[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入发表期刊/会议" value="新能源材料与器件国际会议论文集">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="delete-paper text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="paper-item border border-gray-200 rounded-md p-4 mb-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">论文标题</label>
+                                            <input type="text" name="paperTitle[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入论文标题" value="氢燃料电池系统效率优化与控制策略">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">发表期刊/会议</label>
+                                            <input type="text" name="paperJournal[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入发表期刊/会议" value="动力工程学报">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="delete-paper text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" id="add-paper" class="flex items-center text-primary hover:underline">
+                                <i class="fa fa-plus-circle mr-1"></i> 新增论文
+                            </button>
+                        </div>
+
+                        <!-- 专利详情 -->
+                        <div>
+                            <h4 class="text-base font-medium text-gray-900 mb-3">专利详情</h4>
+                            <div id="patents-container">
+                                <div class="patent-item border border-gray-200 rounded-md p-4 mb-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">专利名称</label>
+                                            <input type="text" name="patentTitle[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入专利名称" value="一种高效氢燃料电池膜电极组件制备方法">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">申请号/授权号</label>
+                                            <input type="text" name="patentNumber[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入申请号/授权号" value="ZL202210345678.9">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="delete-patent text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="patent-item border border-gray-200 rounded-md p-4 mb-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">专利名称</label>
+                                            <input type="text" name="patentTitle[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入专利名称" value="新型氢气储存装置及其控制系统">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">申请号/授权号</label>
+                                            <input type="text" name="patentNumber[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入申请号/授权号" value="CN202310123456.7">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="delete-patent text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" id="add-patent"
+                                class="flex items-center text-primary hover:underline">
+                                <i class="fa fa-plus-circle mr-1"></i> 新增专利
+                            </button>
+                        </div>
+
+                        <!-- 软著详情 -->
+                        <div>
+                            <h4 class="text-base font-medium text-gray-900 mb-3">软著详情</h4>
+                            <div id="software-copyrights-container">
+                                <div class="software-copyright-item border border-gray-200 rounded-md p-4 mb-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">软件名称</label>
+                                            <input type="text" name="softwareCopyrightTitle[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入软件名称" value="氢燃料电池性能监测与分析系统">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">登记号</label>
+                                            <input type="text" name="softwareCopyrightNumber[]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                                placeholder="请输入登记号" value="2023SR1234567">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button"
+                                            class="delete-software-copyright text-danger hover:text-danger/80">
+                                            <i class="fa fa-trash-o mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" id="add-software-copyright"
+                                class="flex items-center text-primary hover:underline">
+                                <i class="fa fa-plus-circle mr-1"></i> 新增软著
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文件上传 -->
+                <div class="bg-white rounded-lg shadow-card mb-8 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">文件上传</h3>
+                    <p class="text-gray-500 mb-4">请上传扫描版PDF文件，单个文件不超过10MB</p>
+
+                    <div class="file-upload-section">
+                        <label for="file-upload"
+                            class="file-upload-label flex flex-col items-center justify-center w-full h-48 bg-gray-50 rounded-lg cursor-pointer">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fa fa-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">点击上传</span> 或拖放文件至此
+                                </p>
+                                <p class="text-xs text-gray-500">支持 PDF 格式，最大 10MB</p>
+                            </div>
+                            <input id="file-upload" name="assessmentFiles[]" type="file" multiple accept=".pdf"
+                                class="hidden" />
+                        </label>
+                        <div id="file-preview" class="mt-4 space-y-2 hidden">
+                            <h4 class="text-sm font-medium text-gray-700">已上传文件：</h4>
+                            <div id="file-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="flex justify-center space-x-4 mt-8">
+                    <button type="button"
+                        class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        保存草稿
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                        提交考核内容
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // 侧边栏菜单展开/折叠功能
+        document.addEventListener('DOMContentLoaded', function () {
+            // 侧边栏菜单切换
+            const sidebarParentItems = document.querySelectorAll('.sidebar-parent-item');
+            sidebarParentItems.forEach(item => {
+                if (item) {
+                    item.addEventListener('click', function () {
+                        const submenu = this.nextElementSibling;
+                        const icon = this.querySelector('.fa-angle-down');
+
+                        if (submenu && submenu.classList.contains('sidebar-submenu')) {
+                            submenu.classList.toggle('hidden');
+                        }
+
+                        if (icon) {
+                            icon.classList.toggle('rotate-180');
+                        }
+                    });
+                }
+            });
+
+            // 移动端菜单切换
+            const menuToggle = document.getElementById('menu-toggle');
+            const closeSidebar = document.getElementById('close-sidebar');
+            const sidebar = document.getElementById('sidebar');
+            const main = document.querySelector('main');
+            const header = document.querySelector('header');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function () {
+                    if (sidebar) {
+                        sidebar.classList.toggle('-translate-x-full');
+                    }
+                    if (main) {
+                        main.classList.toggle('ml-0');
+                        main.classList.toggle('ml-64');
+                    }
+                    if (header) {
+                        header.classList.toggle('left-0');
+                        header.classList.toggle('left-64');
+                    }
+                });
+            }
+
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', function () {
+                    if (sidebar) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                    if (main) {
+                        main.classList.remove('ml-64');
+                        main.classList.add('ml-0');
+                    }
+                    if (header) {
+                        header.classList.remove('left-64');
+                        header.classList.add('left-0');
+                    }
+                });
+            }
+
+            // 设备清单管理
+            const addEquipmentBtn = document.getElementById('add-equipment');
+            const equipmentTableBody = document.getElementById('equipment-table-body');
+
+            if (addEquipmentBtn && equipmentTableBody) {
+                addEquipmentBtn.addEventListener('click', function () {
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'equipment-row';
+                    newRow.innerHTML = `
+                        <td class="py-3 px-4">
+                            <input type="text" name="equipmentName[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入设备名称">
+                        </td>
+                        <td class="py-3 px-4">
+                            <input type="text" name="equipmentModel[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入型号">
+                        </td>
+                        <td class="py-3 px-4">
+                            <input type="number" name="equipmentQuantity[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入数量" min="0">
+                        </td>
+                        <td class="py-3 px-4">
+                            <select name="equipmentStatus[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                <option value="">请选择状态</option>
+                                <option value="正常">正常</option>
+                                <option value="维修中">维修中</option>
+                                <option value="故障">故障</option>
+                                <option value="新增">新增</option>
+                            </select>
+                        </td>
+                        <td class="py-3 px-4">
+                            <input type="text" name="equipmentRemark[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入备注">
+                        </td>
+                        <td class="py-3 px-4">
+                            <button type="button" class="delete-equipment text-danger hover:text-danger/80">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                    `;
+                    equipmentTableBody.appendChild(newRow);
+
+                    // 添加删除事件监听
+                    const deleteBtn = newRow.querySelector('.delete-equipment');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function () {
+                            newRow.remove();
+                        });
+                    }
+                });
+            }
+
+            // 初始化设备删除按钮
+            const deleteEquipmentBtns = document.querySelectorAll('.delete-equipment');
+            deleteEquipmentBtns.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        const row = this.closest('.equipment-row');
+                        if (row && equipmentTableBody.querySelectorAll('.equipment-row').length > 1) {
+                            row.remove();
+                        } else {
+                            alert('至少保留一行设备记录');
+                        }
+                    });
+                }
+            });
+
+            // SOP清单管理
+            const addSOPBtn = document.getElementById('add-sop');
+            const sopTableBody = document.getElementById('sop-table-body');
+            const newSOPCountElement = document.getElementById('new-sop-count');
+
+            // 更新新增SOP数量
+            function updateNewSOPCount() {
+                if (newSOPCountElement) {
+                    const newSOPRows = sopTableBody.querySelectorAll('select[name="sopIsNew[]"] option:checked[value="是"]');
+                    newSOPCountElement.textContent = newSOPRows.length;
+                }
+            }
+
+            if (addSOPBtn && sopTableBody) {
+                addSOPBtn.addEventListener('click', function () {
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'sop-row';
+                    newRow.innerHTML = `
+                        <td class="py-3 px-4">
+                            <input type="text" name="sopName[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入SOP名称">
+                        </td>
+                        <td class="py-3 px-4">
+                            <input type="text" name="sopVersion[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入版本">
+                        </td>
+                        <td class="py-3 px-4">
+                            <select name="sopIsNew[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                <option value="">请选择</option>
+                                <option value="是">是</option>
+                                <option value="否">否</option>
+                            </select>
+                        </td>
+                        <td class="py-3 px-4">
+                            <input type="text" name="sopRemark[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入备注">
+                        </td>
+                        <td class="py-3 px-4">
+                            <button type="button" class="delete-sop text-danger hover:text-danger/80">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                    `;
+                    sopTableBody.appendChild(newRow);
+
+                    // 添加删除事件监听
+                    const deleteBtn = newRow.querySelector('.delete-sop');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function () {
+                            newRow.remove();
+                            updateNewSOPCount();
+                        });
+                    }
+
+                    // 添加选择事件监听
+                    const sopIsNewSelect = newRow.querySelector('select[name="sopIsNew[]"]');
+                    if (sopIsNewSelect) {
+                        sopIsNewSelect.addEventListener('change', updateNewSOPCount);
+                    }
+                });
+            }
+
+            // 初始化SOP删除按钮
+            const deleteSOPBtns = document.querySelectorAll('.delete-sop');
+            deleteSOPBtns.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        const row = this.closest('.sop-row');
+                        if (row && sopTableBody.querySelectorAll('.sop-row').length > 1) {
+                            row.remove();
+                            updateNewSOPCount();
+                        } else {
+                            alert('至少保留一行SOP记录');
+                        }
+                    });
+                }
+            });
+
+            // 初始化SOP选择事件
+            const sopIsNewSelects = document.querySelectorAll('select[name="sopIsNew[]"]');
+            sopIsNewSelects.forEach(select => {
+                if (select) {
+                    select.addEventListener('change', updateNewSOPCount);
+                }
+            });
+
+            // 知识产权管理
+            // 论文管理
+            const addPaperBtn = document.getElementById('add-paper');
+            const papersContainer = document.getElementById('papers-container');
+
+            if (addPaperBtn && papersContainer) {
+                addPaperBtn.addEventListener('click', function () {
+                    const newPaperItem = document.createElement('div');
+                    newPaperItem.className = 'paper-item border border-gray-200 rounded-md p-4 mb-3';
+                    newPaperItem.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">论文标题</label>
+                                <input type="text" name="paperTitle[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入论文标题">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">发表期刊/会议</label>
+                                <input type="text" name="paperJournal[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入发表期刊/会议">
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-end">
+                            <button type="button" class="delete-paper text-danger hover:text-danger/80">
+                                <i class="fa fa-trash-o mr-1"></i>删除
+                            </button>
+                        </div>
+                    `;
+                    papersContainer.appendChild(newPaperItem);
+
+                    // 添加删除事件监听
+                    const deleteBtn = newPaperItem.querySelector('.delete-paper');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function () {
+                            newPaperItem.remove();
+                        });
+                    }
+                });
+            }
+
+            // 专利管理
+            const addPatentBtn = document.getElementById('add-patent');
+            const patentsContainer = document.getElementById('patents-container');
+
+            if (addPatentBtn && patentsContainer) {
+                addPatentBtn.addEventListener('click', function () {
+                    const newPatentItem = document.createElement('div');
+                    newPatentItem.className = 'patent-item border border-gray-200 rounded-md p-4 mb-3';
+                    newPatentItem.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">专利名称</label>
+                                <input type="text" name="patentTitle[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入专利名称">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">申请号/授权号</label>
+                                <input type="text" name="patentNumber[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入申请号/授权号">
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-end">
+                            <button type="button" class="delete-patent text-danger hover:text-danger/80">
+                                <i class="fa fa-trash-o mr-1"></i>删除
+                            </button>
+                        </div>
+                    `;
+                    patentsContainer.appendChild(newPatentItem);
+
+                    // 添加删除事件监听
+                    const deleteBtn = newPatentItem.querySelector('.delete-patent');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function () {
+                            newPatentItem.remove();
+                        });
+                    }
+                });
+            }
+
+            // 软著管理
+            const addSoftwareCopyrightBtn = document.getElementById('add-software-copyright');
+            const softwareCopyrightsContainer = document.getElementById('software-copyrights-container');
+
+            if (addSoftwareCopyrightBtn && softwareCopyrightsContainer) {
+                addSoftwareCopyrightBtn.addEventListener('click', function () {
+                    const newSoftwareCopyrightItem = document.createElement('div');
+                    newSoftwareCopyrightItem.className = 'software-copyright-item border border-gray-200 rounded-md p-4 mb-3';
+                    newSoftwareCopyrightItem.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">软件名称</label>
+                                <input type="text" name="softwareCopyrightTitle[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入软件名称">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">登记号</label>
+                                <input type="text" name="softwareCopyrightNumber[]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入登记号">
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-end">
+                            <button type="button" class="delete-software-copyright text-danger hover:text-danger/80">
+                                <i class="fa fa-trash-o mr-1"></i>删除
+                            </button>
+                        </div>
+                    `;
+                    softwareCopyrightsContainer.appendChild(newSoftwareCopyrightItem);
+
+                    // 添加删除事件监听
+                    const deleteBtn = newSoftwareCopyrightItem.querySelector('.delete-software-copyright');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function () {
+                            newSoftwareCopyrightItem.remove();
+                        });
+                    }
+                });
+            }
+
+            // 文件上传功能
+            const fileUpload = document.getElementById('file-upload');
+            const filePreview = document.getElementById('file-preview');
+            const fileList = document.getElementById('file-list');
+
+            if (fileUpload && filePreview && fileList) {
+                fileUpload.addEventListener('change', function () {
+                    // 清空现有文件列表
+                    fileList.innerHTML = '';
+
+                    // 检查是否有文件
+                    if (this.files.length > 0) {
+                        filePreview.classList.remove('hidden');
+
+                        // 显示文件列表
+                        Array.from(this.files).forEach(file => {
+                            // 检查文件类型和大小
+                            if (file.type !== 'application/pdf') {
+                                alert('只能上传PDF文件');
+                                return;
+                            }
+
+                            if (file.size > 10 * 1024 * 1024) { // 10MB
+                                alert('文件大小不能超过10MB');
+                                return;
+                            }
+
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-md';
+                            fileItem.innerHTML = `
+                                <div class="flex items-center">
+                                    <i class="fa fa-file-pdf-o text-danger mr-2"></i>
+                                    <span class="text-sm text-gray-700 truncate max-w-xs">${file.name}</span>
+                                </div>
+                                <button type="button" class="text-danger hover:text-danger/80 delete-file">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            `;
+                            fileList.appendChild(fileItem);
+
+                            // 添加删除文件事件
+                            const deleteBtn = fileItem.querySelector('.delete-file');
+                            if (deleteBtn) {
+                                deleteBtn.addEventListener('click', function () {
+                                    fileItem.remove();
+
+                                    // 如果没有文件了，隐藏预览区域
+                                    if (fileList.children.length === 0) {
+                                        filePreview.classList.add('hidden');
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        filePreview.classList.add('hidden');
+                    }
+                });
+            }
+
+            // 表单提交处理
+            const assessmentForm = document.getElementById('assessment-form');
+
+            if (assessmentForm) {
+                assessmentForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // 这里可以添加表单验证逻辑
+
+                    // 显示提交成功提示
+                    alert('考核内容提交成功！');
+
+                    // 这里可以添加表单数据的处理逻辑，比如发送到服务器
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

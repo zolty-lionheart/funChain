@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>核心成员 - 功能链管理系统</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CBCB',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        gray: {
+                            50: '#F7F8FA',
+                            100: '#F2F3F5',
+                            200: '#E5E6EB',
+                            300: '#C9CDD4',
+                            400: '#86909C',
+                            500: '#4E5969',
+                            600: '#272E3B',
+                            700: '#1D2129',
+                        },
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                    },
+                },
+            }
+        }
+    </script>
+
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #F7F8FA;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* 表格样式 */
+        .detail-table th {
+            background-color: #F7F8FA;
+            font-weight: 600;
+            color: #4E5969;
+        }
+
+        .detail-table td {
+            border-top: 1px solid #E5E6EB;
+        }
+
+        /* 侧边栏滚动条样式 */
+        #sidebar {
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #C9CDD4 #F7F8FA;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #F7F8FA;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background-color: #C9CDD4;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex">
+    <!-- 左侧菜单栏 -->
+    <aside id="sidebar"
+        class="fixed left-0 top-0 h-full w-64 bg-white shadow-md z-40 transition-all duration-300 transform">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-car text-primary text-2xl"></i>
+                <h1 class="text-lg font-semibold text-gray-900">功能链管理系统</h1>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-primary">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="p-4">
+            <!-- 主菜单 - 首页放在最上面 -->
+            <div class="space-y-1 mb-4">
+                <a href="index.html"
+                    class="flex items-center py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fa fa-home mr-3 text-gray-500"></i>
+                    <span>首页</span>
+                </a>
+            </div>
+
+            <!-- 申报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-file-text-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">申报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-bullseye mr-3 text-gray-400"></i>目标
+                    </a>
+                    <a href="core_members.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-users mr-3 text-gray-400"></i>核心成员填报
+                    </a>
+                </div>
+            </div>
+
+            <!-- 中期工作计划填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-calendar-check-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">中期工作计划填报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="service_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-sitemap mr-3 text-gray-400"></i>服务链分析
+                    </a>
+                    <a href="tool_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-wrench mr-3 text-gray-400"></i>工具链分析
+                    </a>
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-line-chart mr-3 text-gray-400"></i>业务推广计划
+                    </a>
+                    <a href="project_planning.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-building-o mr-3 text-gray-400"></i>建设计划
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- 顶部导航栏 -->
+    <header class="fixed top-0 left-64 right-0 bg-white shadow-sm z-30 transition-all duration-300">
+        <div class="w-full max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button id="toggle-sidebar" class="text-gray-500 hover:text-primary mr-4">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500">申报</span>
+                        <i class="fa fa-angle-right text-gray-400 text-xs"></i>
+                        <span class="text-primary font-medium">核心成员填报</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- 未读信息 -->
+                    <div class="relative">
+                        <button
+                            class="p-2 text-gray-600 hover:text-primary rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="fa fa-bell text-xl"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+                        </button>
+                    </div>
+
+                    <!-- 当前登录用户 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:text-primary">
+                        <img src="logo.png" alt="用户头像" class="w-8 h-8 rounded-full border-2 border-gray-200">
+                        <span class="text-gray-700">张三</span>
+                    </div>
+
+                    <!-- 登出按钮 -->
+                    <button onclick="logout()"
+                        class="flex items-center space-x-1 px-3 py-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-md transition-colors">
+                        <i class="fa fa-sign-out"></i>
+                        <span>登出</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white border-t animate-fadeIn" id="mobile-menu">
+            <div class="w-full max-w-7xl mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i
+                        class="fa fa-home mr-2"></i> 首页</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 pt-24 pb-6">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">核心成员信息</h2>
+            <p class="text-gray-500 mt-1">请填写和管理项目的核心成员基本信息</p>
+        </div>
+
+        <!-- 添加成员按钮 -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <button id="add-member-btn"
+                    class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center">
+                    <i class="fa fa-plus mr-2"></i>
+                    <span>添加核心成员</span>
+                </button>
+            </div>
+            <div class="relative">
+                <input type="text" placeholder="搜索成员..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- 核心成员列表 -->
+        <div class="bg-white rounded-lg shadow-card overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full detail-table">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                序号</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                姓名</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                职位</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                部门</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                联系方式</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                邮箱</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                职责</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- 成员1 -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <div class="font-medium text-gray-900">张三</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">项目经理</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">研发部</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">13800138001</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary">zhangsan@example.com</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">负责项目整体规划和协调</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-primary hover:text-primary/80 mr-3 transition-colors">编辑</button>
+                                <button class="text-danger hover:text-danger/80 transition-colors">删除</button>
+                            </td>
+                        </tr>
+                        <!-- 成员2 -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <div class="font-medium text-gray-900">李四</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">技术负责人</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">技术部</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">13900139002</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary">lisi@example.com</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">负责技术架构设计和实现</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-primary hover:text-primary/80 mr-3 transition-colors">编辑</button>
+                                <button class="text-danger hover:text-danger/80 transition-colors">删除</button>
+                            </td>
+                        </tr>
+                        <!-- 成员3 -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                    <div class="font-medium text-gray-900">王五</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">产品经理</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">产品部</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">13700137003</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary">wangwu@example.com</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">负责产品需求分析和设计</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-primary hover:text-primary/80 mr-3 transition-colors">编辑</button>
+                                <button class="text-danger hover:text-danger/80 transition-colors">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    显示 <span class="font-medium">1</span> 到 <span class="font-medium">3</span> 条，共 <span
+                        class="font-medium">3</span> 条记录
+                </div>
+                <div class="flex space-x-1">
+                    <button
+                        class="px-3 py-1 rounded border border-gray-300 text-gray-500 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        <i class="fa fa-angle-left"></i>
+                    </button>
+                    <button class="px-3 py-1 rounded border border-primary bg-primary text-white">1</button>
+                    <button
+                        class="px-3 py-1 rounded border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                        <i class="fa fa-angle-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+
+    <!-- 添加/编辑成员模态框 -->
+    <div id="member-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/50 transition-opacity"></div>
+        <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 id="modal-title" class="text-lg font-semibold text-gray-900">添加核心成员</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="member-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">姓名 <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="name" name="name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                required>
+                        </div>
+                        <div>
+                            <label for="position" class="block text-sm font-medium text-gray-700 mb-1">职位 <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="position" name="position"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                required>
+                        </div>
+                        <div>
+                            <label for="department" class="block text-sm font-medium text-gray-700 mb-1">部门 <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="department" name="department"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                required>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">联系方式 <span
+                                    class="text-danger">*</span></label>
+                            <input type="tel" id="phone" name="phone"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">邮箱 <span
+                                    class="text-danger">*</span></label>
+                            <input type="email" id="email" name="email"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="responsibility" class="block text-sm font-medium text-gray-700 mb-1">职责 <span
+                                    class="text-danger">*</span></label>
+                            <textarea id="responsibility" name="responsibility" rows="3"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                required></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancel-btn"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    取消
+                </button>
+                <button id="save-btn"
+                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 侧边栏折叠/展开功能
+        document.addEventListener('DOMContentLoaded', function () {
+            // 侧边栏折叠/展开
+            const sidebar = document.getElementById('sidebar');
+            const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+            const mainContent = document.querySelector('.flex-1');
+            let sidebarCollapsed = false;
+
+            if (toggleSidebarBtn) {
+                toggleSidebarBtn.addEventListener('click', function () {
+                    sidebarCollapsed = !sidebarCollapsed;
+                    if (sidebarCollapsed) {
+                        sidebar.classList.remove('w-64');
+                        sidebar.classList.add('w-20');
+                        mainContent.classList.remove('ml-64');
+                        mainContent.classList.add('ml-20');
+                        // 隐藏文字
+                        document.querySelectorAll('#sidebar span:not(.fa, .fa *)').forEach(el => {
+                            el.classList.add('hidden');
+                        });
+                    } else {
+                        sidebar.classList.remove('w-20');
+                        sidebar.classList.add('w-64');
+                        mainContent.classList.remove('ml-20');
+                        mainContent.classList.add('ml-64');
+                        // 显示文字
+                        document.querySelectorAll('#sidebar span:not(.fa, .fa *)').forEach(el => {
+                            el.classList.remove('hidden');
+                        });
+                    }
+                });
+            }
+
+            // 移动端关闭侧边栏
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+            if (closeSidebarBtn) {
+                closeSidebarBtn.addEventListener('click', function () {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+
+            // 菜单展开/收起功能
+            const parentItems = document.querySelectorAll('.sidebar-parent-item');
+            parentItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('.fa-angle-down');
+
+                    if (submenu.classList.contains('hidden')) {
+                        submenu.classList.remove('hidden');
+                        icon.classList.add('rotate-180');
+                    } else {
+                        submenu.classList.add('hidden');
+                        icon.classList.remove('rotate-180');
+                    }
+                });
+            });
+
+            // 模态框功能
+            const modal = document.getElementById('member-modal');
+            const addMemberBtn = document.getElementById('add-member-btn');
+            const closeModalBtn = document.getElementById('close-modal');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const modalTitle = document.getElementById('modal-title');
+
+            if (addMemberBtn && modal) {
+                addMemberBtn.addEventListener('click', function () {
+                    modalTitle.textContent = '添加核心成员';
+                    document.getElementById('member-form').reset();
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                });
+
+                function closeModal() {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
+
+                if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+                if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+                // 点击模态框外部关闭
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+
+                // 保存按钮功能
+                if (saveBtn) {
+                    saveBtn.addEventListener('click', function () {
+                        const form = document.getElementById('member-form');
+                        if (form.checkValidity()) {
+                            // 这里可以添加保存逻辑
+                            alert('保存成功！');
+                            closeModal();
+                        } else {
+                            form.reportValidity();
+                        }
+                    });
+                }
+            }
+
+            // 编辑按钮功能
+            const editButtons = document.querySelectorAll('button:contains("编辑")');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // 这里可以根据实际情况填充表单数据
+                    modalTitle.textContent = '编辑核心成员';
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // 删除按钮功能
+            const deleteButtons = document.querySelectorAll('button:contains("删除")');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (confirm('确定要删除该成员吗？')) {
+                        // 这里可以添加删除逻辑
+                        alert('删除成功！');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工具链管理 - 功能链管理系统</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    
+
     <!-- Tailwind 配置 -->
     <script>
         tailwind.config = {
@@ -28,7 +30,7 @@
             }
         }
     </script>
-    
+
     <style type="text/tailwindcss">
         @layer utilities {
             .content-auto {
@@ -48,80 +50,207 @@
             }
         }
     </style>
-    
+
     <style>
         /* 自定义滚动条 */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #c1c1c1;
             border-radius: 3px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #a1a1a1;
         }
-        
+
         /* 动画效果 */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fadeIn {
             animation: fadeIn 0.5s ease forwards;
         }
-        
+
         /* 下拉框搜索样式 */
         .dropdown-search:focus {
             outline: none;
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
+
         .dropdown-item:hover {
             background-color: #f3f4f6;
         }
+
         .dropdown-item.active {
             background-color: #eff6ff;
             color: #2563eb;
         }
     </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 左侧菜单栏 -->
+    <aside id="sidebar"
+        class="fixed left-0 top-0 h-full w-64 bg-white shadow-md z-40 transition-all duration-300 transform">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-car text-primary text-2xl"></i>
+                <h1 class="text-lg font-semibold text-gray-900">功能链管理系统</h1>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-primary">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="p-4">
+            <!-- 主菜单 - 首页放在最上面 -->
+            <div class="space-y-1 mb-4">
+                <a href="index.html"
+                    class="flex items-center py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fa fa-home mr-3 text-gray-500"></i>
+                    <span>首页</span>
+                </a>
+            </div>
+
+            <!-- 申报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-file-text-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">申报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-bullseye mr-3 text-gray-400"></i>目标
+                    </a>
+                    <a href="core_members.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-users mr-3 text-gray-400"></i>核心成员填报
+                    </a>
+                </div>
+            </div>
+
+            <!-- 中期工作计划填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-calendar-check-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">中期工作计划填报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="service_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-sitemap mr-3 text-gray-400"></i>服务链分析
+                    </a>
+                    <a href="tool_chain_manage.html"
+                        class="block py-2 px-3 text-primary bg-primary/5 rounded-md transition-colors">
+                        <i class="fa fa-wrench mr-3 text-primary"></i>工具链分析
+                    </a>
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-line-chart mr-3 text-gray-400"></i>业务推广计划
+                    </a>
+                    <a href="project_planning.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-building-o mr-3 text-gray-400"></i>建设计划
+                    </a>
+                </div>
+            </div>
+
+            <!-- 考核情况填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-tasks mr-3 text-gray-500"></i>
+                        <span class="font-medium">考核情况填报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="assessment.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-check-square-o mr-3 text-gray-400"></i>考核内容填报
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
     <!-- 顶部导航栏 -->
-    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
-        <div class="container mx-auto px-4">
+    <header class="fixed top-0 left-64 right-0 bg-white shadow-sm z-30 transition-all duration-300">
+        <div class="w-full max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <div class="text-xl font-bold text-primary">
-                        <i class="fa fa-cogs mr-2"></i>工具链管理
+                    <button id="toggle-sidebar" class="text-gray-500 hover:text-primary mr-4">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500">中期工作计划填报</span>
+                        <i class="fa fa-angle-right text-gray-400 text-xs"></i>
+                        <span class="text-primary font-medium">工具链分析</span>
                     </div>
                 </div>
-                
-                <!-- 导航菜单 - 桌面端 -->
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html" class="nav-item py-1 px-2 hover:text-primary transition-colors"><i class="fa fa-home mr-1"></i> 首页</a>
-                </nav>
-                
-                <!-- 移动端菜单按钮 -->
-                <button class="md:hidden text-gray-600 hover:text-primary transition-colors" id="mobile-menu-btn" aria-label="菜单">
-                    <i class="fa fa-bars text-xl"></i>
-                </button>
+                <div class="flex items-center space-x-4">
+                    <!-- 未读信息 -->
+                    <div class="relative">
+                        <button
+                            class="p-2 text-gray-600 hover:text-primary rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="fa fa-bell text-xl"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+                        </button>
+                    </div>
+
+                    <!-- 当前登录用户 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:text-primary">
+                        <img src="logo.png" alt="用户头像" class="w-8 h-8 rounded-full border-2 border-gray-200">
+                        <span class="text-gray-700">张三</span>
+                    </div>
+
+                    <!-- 登出按钮 -->
+                    <button onclick="logout()"
+                        class="flex items-center space-x-1 px-3 py-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-md transition-colors">
+                        <i class="fa fa-sign-out"></i>
+                        <span>登出</span>
+                    </button>
+                </div>
             </div>
         </div>
-        
         <!-- 移动端菜单 -->
         <div class="md:hidden hidden bg-white border-t animate-fadeIn" id="mobile-menu">
-            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i class="fa fa-home mr-2"></i> 首页</a>
+            <div class="w-full max-w-7xl mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i
+                        class="fa fa-home mr-2"></i> 首页</a>
             </div>
         </div>
     </header>
 
     <!-- 主内容区 -->
-    <main class="flex-grow container mx-auto px-4 pt-24 pb-6">
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 pt-24 pb-6">
         <!-- 页面标题 -->
         <div class="mb-6 animate-fadeIn">
             <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-900">工具链管理</h2>
@@ -135,32 +264,42 @@
                 <!-- 基础信息 -->
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">工具链名称</label>
-                    <input type="text" id="chainName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" required>
+                    <input type="text" id="chainName"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                        required>
                 </div>
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">工具链代码</label>
-                    <input type="text" id="chainCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" required>
+                    <input type="text" id="chainCode"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                        required>
                 </div>
 
                 <!-- 下拉选择器 - 标准 -->
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">标准</label>
                     <div class="relative" id="standardDropdownContainer">
-                        <input type="text" id="standardSearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索标准..." readonly>
+                        <input type="text" id="standardSearch"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer"
+                            placeholder="搜索标准..." readonly>
                         <input type="hidden" id="selectedStandard">
                         <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                             <i class="fa fa-chevron-down text-gray-400"></i>
                         </div>
                         <!-- 下拉菜单 -->
-                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="standardDropdown">
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
+                            id="standardDropdown">
                             <div class="p-2 border-b border-gray-200">
-                                <input type="text" id="standardInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                                <input type="text" id="standardInternalSearch"
+                                    class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm"
+                                    placeholder="搜索...">
                             </div>
                             <!-- 标准列表 -->
                             <div id="standardList"></div>
                             <div class="p-2 border-t border-gray-200">
-                                <button type="button" id="addNewStandard" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                <button type="button" id="addNewStandard"
+                                    class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
                                     <i class="fa fa-plus mr-2"></i> 添加新标准
                                 </button>
                             </div>
@@ -172,20 +311,26 @@
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">能力</label>
                     <div class="relative" id="abilityDropdownContainer">
-                        <input type="text" id="abilitySearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索能力..." readonly>
+                        <input type="text" id="abilitySearch"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer"
+                            placeholder="搜索能力..." readonly>
                         <input type="hidden" id="selectedAbility">
                         <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                             <i class="fa fa-chevron-down text-gray-400"></i>
                         </div>
                         <!-- 下拉菜单 -->
-                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="abilityDropdown">
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
+                            id="abilityDropdown">
                             <div class="p-2 border-b border-gray-200">
-                                <input type="text" id="abilityInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                                <input type="text" id="abilityInternalSearch"
+                                    class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm"
+                                    placeholder="搜索...">
                             </div>
                             <!-- 能力列表 -->
                             <div id="abilityList"></div>
                             <div class="p-2 border-t border-gray-200">
-                                <button type="button" id="addNewAbility" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                <button type="button" id="addNewAbility"
+                                    class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
                                     <i class="fa fa-plus mr-2"></i> 添加新能力
                                 </button>
                             </div>
@@ -197,20 +342,26 @@
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">设备</label>
                     <div class="relative" id="deviceDropdownContainer">
-                        <input type="text" id="deviceSearch" class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer" placeholder="搜索设备..." readonly>
+                        <input type="text" id="deviceSearch"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg dropdown-search cursor-pointer"
+                            placeholder="搜索设备..." readonly>
                         <input type="hidden" id="selectedDevice">
                         <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                             <i class="fa fa-chevron-down text-gray-400"></i>
                         </div>
                         <!-- 下拉菜单 -->
-                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto" id="deviceDropdown">
+                        <div class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
+                            id="deviceDropdown">
                             <div class="p-2 border-b border-gray-200">
-                                <input type="text" id="deviceInternalSearch" class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm" placeholder="搜索...">
+                                <input type="text" id="deviceInternalSearch"
+                                    class="w-full px-3 py-1 border border-gray-300 rounded-md text-sm"
+                                    placeholder="搜索...">
                             </div>
                             <!-- 设备列表 -->
                             <div id="deviceList"></div>
                             <div class="p-2 border-t border-gray-200">
-                                <button type="button" id="addNewDevice" class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
+                                <button type="button" id="addNewDevice"
+                                    class="w-full px-3 py-2 text-sm text-primary hover:bg-blue-50 rounded-md transition-colors flex items-center justify-center">
                                     <i class="fa fa-plus mr-2"></i> 添加新设备
                                 </button>
                             </div>
@@ -221,16 +372,19 @@
                 <!-- 备注信息 -->
                 <div class="space-y-2 md:col-span-2 lg:col-span-3">
                     <label class="block text-sm font-medium text-gray-700">备注信息</label>
-                    <textarea id="chainRemark" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"></textarea>
+                    <textarea id="chainRemark" rows="3"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"></textarea>
                 </div>
             </form>
 
             <!-- 操作按钮 -->
             <div class="mt-6 flex justify-end space-x-4">
-                <button id="resetForm" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                <button id="resetForm"
+                    class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                     重置
                 </button>
-                <button id="submitForm" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center">
+                <button id="submitForm"
+                    class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center">
                     <i class="fa fa-plus mr-2"></i> 添加工具链
                 </button>
             </div>
@@ -241,7 +395,9 @@
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-semibold text-gray-900">工具链列表</h3>
                 <div class="relative">
-                    <input type="text" id="chainSearch" class="w-full md:w-64 px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="搜索工具链...">
+                    <input type="text" id="chainSearch"
+                        class="w-full md:w-64 px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                        placeholder="搜索工具链...">
                     <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                         <i class="fa fa-search"></i>
                     </div>
@@ -253,49 +409,57 @@
                 <table class="w-full min-w-full divide-y divide-gray-200">
                     <thead>
                         <tr class="bg-gradient-to-r from-primary/5 to-gray-50">
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-hashtag mr-2 text-primary"></i>
                                     序号
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-link mr-2 text-primary"></i>
                                     工具链名称
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-code mr-2 text-primary"></i>
                                     工具链代码
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-book mr-2 text-primary"></i>
                                     标准
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-tasks mr-2 text-primary"></i>
                                     能力
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-cogs mr-2 text-primary"></i>
                                     设备
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-calendar-plus-o mr-2 text-primary"></i>
                                     创建时间
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
+                            <th scope="col"
+                                class="px-4 py-4 text-sm font-semibold text-gray-700 hover:bg-primary/10 transition-colors duration-200">
                                 <div class="flex items-center">
                                     <i class="fa fa-cog mr-2 text-primary"></i>
                                     操作
@@ -312,13 +476,16 @@
             <!-- 分页 -->
             <div class="mt-6 flex justify-between items-center">
                 <div class="text-sm text-gray-500">
-                    显示 <span id="showingStart">1</span> 至 <span id="showingEnd">10</span> 条，共 <span id="totalCount">0</span> 条记录
+                    显示 <span id="showingStart">1</span> 至 <span id="showingEnd">10</span> 条，共 <span
+                        id="totalCount">0</span> 条记录
                 </div>
                 <div class="flex space-x-2">
-                    <button id="prevPage" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button id="prevPage"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fa fa-chevron-left"></i>
                     </button>
-                    <button id="nextPage" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button id="nextPage"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fa fa-chevron-right"></i>
                     </button>
                 </div>
@@ -340,19 +507,23 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">名称</label>
-                        <input type="text" id="newItemName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        <input type="text" id="newItemName"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">描述</label>
-                        <textarea id="newItemDesc" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"></textarea>
+                        <textarea id="newItemDesc" rows="2"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"></textarea>
                     </div>
                 </div>
             </div>
             <div class="p-5 border-t border-gray-200 flex justify-end space-x-3">
-                <button id="cancelModal" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                <button id="cancelModal"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
                     取消
                 </button>
-                <button id="confirmModal" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                <button id="confirmModal"
+                    class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
                     确认
                 </button>
             </div>
@@ -360,7 +531,8 @@
     </div>
 
     <!-- 删除确认模态框 -->
-    <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="deleteConfirmModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
             <div class="p-5 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">确认删除</h3>
@@ -370,10 +542,12 @@
                 <input type="hidden" id="deleteChainId">
             </div>
             <div class="p-5 border-t border-gray-200 flex justify-end space-x-3">
-                <button id="cancelDelete" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                <button id="cancelDelete"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
                     取消
                 </button>
-                <button id="confirmDelete" class="px-4 py-2 bg-danger text-white rounded-md hover:bg-danger/90 transition-colors">
+                <button id="confirmDelete"
+                    class="px-4 py-2 bg-danger text-white rounded-md hover:bg-danger/90 transition-colors">
                     删除
                 </button>
             </div>
@@ -440,13 +614,13 @@
         }
 
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // 初始化下拉框数据
             initDropdownData();
-            
+
             // 初始化工具链列表
             renderToolChainTable();
-            
+
             // 绑定事件
             bindEvents();
         });
@@ -455,10 +629,10 @@
         function initDropdownData() {
             // 标准下拉框
             renderDropdownItems('standard', mockData.standards);
-            
+
             // 能力下拉框
             renderDropdownItems('ability', mockData.abilities);
-            
+
             // 设备下拉框
             renderDropdownItems('device', mockData.devices);
         }
@@ -467,36 +641,36 @@
         function renderDropdownItems(type, data) {
             const listElement = document.getElementById(`${type}List`);
             listElement.innerHTML = '';
-            
+
             data.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer dropdown-item';
                 div.dataset.id = item.id;
                 // 统一显示名称
                 div.textContent = item.name;
-                
-                div.addEventListener('click', function() {
+
+                div.addEventListener('click', function () {
                     const searchInput = document.getElementById(`${type}Search`);
                     const selectedInput = document.getElementById(`selected${capitalizeFirst(type)}`);
                     const dropdown = document.getElementById(`${type}Dropdown`);
-                    
+
                     if (searchInput) {
                         // 统一设置搜索框值为名称
                         searchInput.value = item.name;
                     }
-                    
+
                     if (selectedInput) {
                         // 设置选中值
                         selectedInput.value = item.id;
                         // 添加调试信息
                         console.log(`设置了${type}的选中值:`, selectedInput.value);
                     }
-                    
+
                     if (dropdown) {
                         dropdown.classList.add('hidden');
                     }
                 });
-                
+
                 listElement.appendChild(div);
             });
         }
@@ -511,7 +685,7 @@
         function renderToolChainTable() {
             const tableBody = document.getElementById('toolChainTable');
             tableBody.innerHTML = '';
-            
+
             if (mockData.toolChains.length === 0) {
                 const emptyRow = document.createElement('tr');
                 emptyRow.innerHTML = `
@@ -525,7 +699,7 @@
                 tableBody.appendChild(emptyRow);
                 return;
             }
-            
+
             mockData.toolChains.forEach((chain, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 transition-colors';
@@ -550,7 +724,7 @@
                 `;
                 tableBody.appendChild(row);
             });
-            
+
             // 更新分页信息
             document.getElementById('totalCount').textContent = mockData.toolChains.length;
             document.getElementById('showingEnd').textContent = Math.min(10, mockData.toolChains.length);
@@ -559,17 +733,17 @@
         // 绑定事件
         function bindEvents() {
             // 移动端菜单
-            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu-btn').addEventListener('click', function () {
                 document.getElementById('mobile-menu').classList.toggle('hidden');
             });
-            
+
             // 下拉框点击事件
             const dropdownTypes = ['standard', 'ability', 'device'];
             dropdownTypes.forEach(type => {
                 // 点击输入框显示下拉菜单
                 const searchInput = document.getElementById(`${type}Search`);
                 if (searchInput) {
-                    searchInput.addEventListener('click', function(e) {
+                    searchInput.addEventListener('click', function (e) {
                         e.stopPropagation();
                         closeAllDropdowns();
                         const dropdown = document.getElementById(`${type}Dropdown`);
@@ -578,14 +752,14 @@
                         }
                     });
                 }
-                
+
                 // 下拉框搜索
                 const internalSearch = document.getElementById(`${type}InternalSearch`);
                 if (internalSearch) {
-                    internalSearch.addEventListener('input', function() {
+                    internalSearch.addEventListener('input', function () {
                         const searchTerm = this.value.toLowerCase();
                         const items = document.querySelectorAll(`#${type}List .dropdown-item`);
-                        
+
                         items.forEach(item => {
                             if (item.textContent.toLowerCase().includes(searchTerm)) {
                                 item.style.display = 'block';
@@ -595,7 +769,7 @@
                         });
                     });
                 }
-                
+
                 // 添加新项按钮
                 const addButton = document.getElementById(`addNew${capitalizeFirst(type)}`);
                 const modalTypeInput = document.getElementById('modalType');
@@ -603,9 +777,9 @@
                 const newItemNameInput = document.getElementById('newItemName');
                 const newItemDescInput = document.getElementById('newItemDesc');
                 const newItemModal = document.getElementById('newItemModal');
-                
+
                 if (addButton) {
-                    addButton.addEventListener('click', function() {
+                    addButton.addEventListener('click', function () {
                         if (modalTypeInput) modalTypeInput.value = type;
                         if (modalTitle) modalTitle.textContent = `添加新${getTypeName(type)}`;
                         if (newItemNameInput) newItemNameInput.value = '';
@@ -614,50 +788,50 @@
                     });
                 }
             });
-            
+
             // 关闭所有下拉框
             function closeAllDropdowns() {
                 dropdownTypes.forEach(type => {
                     document.getElementById(`${type}Dropdown`).classList.add('hidden');
                 });
             }
-            
+
             // 点击页面其他地方关闭下拉框
-            document.addEventListener('click', function() {
+            document.addEventListener('click', function () {
                 closeAllDropdowns();
             });
-            
+
             // 阻止下拉框内部点击事件冒泡
             dropdownTypes.forEach(type => {
-                document.getElementById(`${type}Dropdown`).addEventListener('click', function(e) {
+                document.getElementById(`${type}Dropdown`).addEventListener('click', function (e) {
                     e.stopPropagation();
                 });
             });
-            
+
             // 表单重置
-            document.getElementById('resetForm').addEventListener('click', function() {
+            document.getElementById('resetForm').addEventListener('click', function () {
                 document.getElementById('addToolChainForm').reset();
                 dropdownTypes.forEach(type => {
                     document.getElementById(`${type}Search`).value = '';
                     document.getElementById(`selected${capitalizeFirst(type)}`).value = '';
                 });
             });
-            
+
             // 表单提交
-            document.getElementById('submitForm').addEventListener('click', function() {
+            document.getElementById('submitForm').addEventListener('click', function () {
                 // 表单验证
                 const chainName = document.getElementById('chainName').value.trim();
                 const chainCode = document.getElementById('chainCode').value.trim();
                 const selectedStandardId = document.getElementById('selectedStandard').value;
                 const selectedAbilityId = document.getElementById('selectedAbility').value;
                 const selectedDeviceId = document.getElementById('selectedDevice').value;
-                
+
                 // 添加调试信息
                 console.log('表单提交时的选中值：');
                 console.log('标准 ID:', selectedStandardId);
                 console.log('能力 ID:', selectedAbilityId);
                 console.log('设备 ID:', selectedDeviceId);
-                
+
                 if (!chainName) {
                     alert('请输入工具链名称');
                     return;
@@ -678,7 +852,7 @@
                     alert('请选择设备');
                     return;
                 }
-                
+
                 // 创建新工具链
                 const newChain = {
                     id: mockData.toolChains.length + 1,
@@ -697,13 +871,13 @@
                         second: '2-digit'
                     }).replace(/\//g, '-')
                 };
-                
+
                 console.log('创建的新工具链:', newChain);
-                
+
                 // 添加到数据中
                 mockData.toolChains.push(newChain);
                 console.log('工具链添加成功，当前工具链列表:', mockData.toolChains);
-                
+
                 // 重置表单
                 document.getElementById('addToolChainForm').reset();
                 dropdownTypes.forEach(type => {
@@ -712,33 +886,33 @@
                     if (searchInput) searchInput.value = '';
                     if (selectedInput) selectedInput.value = '';
                 });
-                
+
                 // 重新渲染表格
                 renderToolChainTable();
-                
+
                 // 显示成功提示
                 alert('工具链添加成功！');
             });
-            
+
             // 模态框操作
-            document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('closeModal').addEventListener('click', function () {
                 document.getElementById('newItemModal').classList.add('hidden');
             });
-            
-            document.getElementById('cancelModal').addEventListener('click', function() {
+
+            document.getElementById('cancelModal').addEventListener('click', function () {
                 document.getElementById('newItemModal').classList.add('hidden');
             });
-            
-            document.getElementById('confirmModal').addEventListener('click', function() {
+
+            document.getElementById('confirmModal').addEventListener('click', function () {
                 const type = document.getElementById('modalType').value;
                 const name = document.getElementById('newItemName').value.trim();
                 const desc = document.getElementById('newItemDesc').value.trim();
-                
+
                 if (!name) {
                     alert(`请输入${getTypeName(type)}名称`);
                     return;
                 }
-                
+
                 // 添加新项到对应数组
                 const dataArray = mockData[`${type}s`] || [];
                 const newItem = {
@@ -747,17 +921,17 @@
                     code: `${type.toUpperCase()}-${String(dataArray.length + 1).padStart(3, '0')}`,
                     description: desc
                 };
-                
+
                 dataArray.push(newItem);
                 console.log(`添加了新的${type}:`, newItem);
-                
+
                 // 重新渲染下拉框
                 renderDropdownItems(type, dataArray);
-                
+
                 // 自动选择新添加的项
                 const searchInput = document.getElementById(`${type}Search`);
                 const selectedInput = document.getElementById(`selected${capitalizeFirst(type)}`);
-                
+
                 if (searchInput && selectedInput) {
                     searchInput.value = newItem.name;
                     selectedInput.value = newItem.id;
@@ -766,13 +940,13 @@
 
                 // 关闭模态框
                 document.getElementById('newItemModal').classList.add('hidden');
-                
+
                 // 显示成功提示
                 alert(`${getTypeName(type)}添加成功！`);
             });
-            
+
             // 删除操作
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (e.target.closest('.delete-btn')) {
                     const btn = e.target.closest('.delete-btn');
                     const chainId = btn.dataset.id;
@@ -780,33 +954,33 @@
                     document.getElementById('deleteConfirmModal').classList.remove('hidden');
                 }
             });
-            
-            document.getElementById('cancelDelete').addEventListener('click', function() {
+
+            document.getElementById('cancelDelete').addEventListener('click', function () {
                 document.getElementById('deleteConfirmModal').classList.add('hidden');
             });
-            
-            document.getElementById('confirmDelete').addEventListener('click', function() {
+
+            document.getElementById('confirmDelete').addEventListener('click', function () {
                 const chainId = document.getElementById('deleteChainId').value;
                 const index = mockData.toolChains.findIndex(c => c.id == chainId);
-                
+
                 if (index !== -1) {
                     mockData.toolChains.splice(index, 1);
                     renderToolChainTable();
                 }
-                
+
                 document.getElementById('deleteConfirmModal').classList.add('hidden');
                 alert('工具链删除成功！');
             });
-            
+
             // 搜索功能
-            document.getElementById('chainSearch').addEventListener('input', function() {
+            document.getElementById('chainSearch').addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 const rows = document.querySelectorAll('#toolChainTable tr');
-                
+
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td');
                     let found = false;
-                    
+
                     cells.forEach((cell, index) => {
                         // 只搜索名称、代码、标准、能力和设备列
                         if (index >= 1 && index <= 5) {
@@ -815,11 +989,55 @@
                             }
                         }
                     });
-                    
+
                     row.style.display = found ? '' : 'none';
                 });
             });
         }
     </script>
+
+    <script>
+        // 侧边栏菜单展开/折叠
+        document.addEventListener('DOMContentLoaded', function () {
+            // 侧边栏菜单展开/折叠
+            const parentItems = document.querySelectorAll('.sidebar-parent-item');
+            parentItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('.fa-angle-down');
+
+                    // 切换当前子菜单
+                    if (submenu && submenu.classList.contains('sidebar-submenu')) {
+                        submenu.classList.toggle('hidden');
+                        icon.style.transform = submenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+                    }
+                });
+            });
+
+            // 调整主内容区域的padding-left
+            const mainContent = document.querySelector('.container');
+            if (mainContent) {
+                mainContent.style.paddingLeft = '272px'; // 64px + 16px
+            }
+
+            // 移动端侧边栏处理
+            const menuToggle = document.getElementById('menu-toggle');
+            const closeSidebar = document.getElementById('close-sidebar');
+            const sidebar = document.getElementById('sidebar');
+
+            if (menuToggle && sidebar) {
+                menuToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+            }
+
+            if (closeSidebar && sidebar) {
+                closeSidebar.addEventListener('click', function () {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>

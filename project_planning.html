@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>项目计划管理系统</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -58,46 +62,161 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans">
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 左侧菜单栏 -->
+    <aside id="sidebar"
+        class="fixed left-0 top-0 h-full w-64 bg-white shadow-md z-40 transition-all duration-300 transform">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-car text-primary text-2xl"></i>
+                <h1 class="text-lg font-semibold text-gray-900">功能链管理系统</h1>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-primary">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="p-4">
+            <!-- 主菜单 - 首页放在最上面 -->
+            <div class="space-y-1 mb-4">
+                <a href="index.html"
+                    class="flex items-center py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                    <i class="fa fa-home mr-3 text-gray-500"></i>
+                    <span>首页</span>
+                </a>
+            </div>
+
+            <!-- 申报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-file-text-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">申报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-bullseye mr-3 text-gray-400"></i>目标
+                    </a>
+                    <a href="core_members.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-users mr-3 text-gray-400"></i>核心成员填报
+                    </a>
+                </div>
+            </div>
+
+            <!-- 中期工作计划填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-calendar-check-o mr-3 text-gray-500"></i>
+                        <span class="font-medium">中期工作计划填报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="service_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-sitemap mr-3 text-gray-400"></i>服务链分析
+                    </a>
+                    <a href="tool_chain_manage.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-wrench mr-3 text-gray-400"></i>工具链分析
+                    </a>
+                    <a href="#"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-line-chart mr-3 text-gray-400"></i>业务推广计划
+                    </a>
+                    <a href="project_planning.html"
+                        class="block py-2 px-3 text-primary bg-primary/5 rounded-md transition-colors">
+                        <i class="fa fa-building-o mr-3 text-primary"></i>建设计划
+                    </a>
+                </div>
+            </div>
+
+            <!-- 考核情况填报菜单 -->
+            <div class="mb-4">
+                <div
+                    class="flex items-center justify-between cursor-pointer hover:text-primary py-2 px-3 rounded-md hover:bg-gray-50 sidebar-parent-item">
+                    <span class="flex items-center">
+                        <i class="fa fa-tasks mr-3 text-gray-500"></i>
+                        <span class="font-medium">考核情况填报</span>
+                    </span>
+                    <i class="fa fa-angle-down transition-transform duration-300 text-gray-500"></i>
+                </div>
+                <div class="ml-9 mt-2 space-y-2 sidebar-submenu hidden">
+                    <a href="assessment.html"
+                        class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-check-square-o mr-3 text-gray-400"></i>考核内容填报
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
     <!-- 顶部导航栏 -->
-    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
-        <div class="container mx-auto px-4">
+    <header class="fixed top-0 left-64 right-0 bg-white shadow-sm z-30 transition-all duration-300">
+        <div class="w-full max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <div class="text-xl font-bold text-primary">
-                        <i class="fa fa-tasks mr-2"></i>项目计划管理
+                    <button id="toggle-sidebar" class="text-gray-500 hover:text-primary mr-4">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500">中期工作计划填报</span>
+                        <i class="fa fa-angle-right text-gray-400 text-xs"></i>
+                        <span class="text-primary font-medium">建设计划</span>
                     </div>
                 </div>
-                
-                <!-- 导航菜单 - 桌面端 -->
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html" class="nav-item py-1 px-2 hover:text-primary transition-colors"><i class="fa fa-home mr-1"></i> 首页</a>
-                </nav>
-                
-                <!-- 移动端菜单按钮 -->
-                <button class="md:hidden text-gray-600 hover:text-primary transition-colors" id="mobile-menu-btn" aria-label="菜单">
-                    <i class="fa fa-bars text-xl"></i>
-                </button>
+                <div class="flex items-center space-x-4">
+                    <!-- 未读信息 -->
+                    <div class="relative">
+                        <button
+                            class="p-2 text-gray-600 hover:text-primary rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="fa fa-bell text-xl"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+                        </button>
+                    </div>
+
+                    <!-- 当前登录用户 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:text-primary">
+                        <img src="logo.png" alt="用户头像" class="w-8 h-8 rounded-full border-2 border-gray-200">
+                        <span class="text-gray-700">张三</span>
+                    </div>
+
+                    <!-- 登出按钮 -->
+                    <button onclick="logout()"
+                        class="flex items-center space-x-1 px-3 py-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-md transition-colors">
+                        <i class="fa fa-sign-out"></i>
+                        <span>登出</span>
+                    </button>
+                </div>
             </div>
         </div>
-        
         <!-- 移动端菜单 -->
         <div class="md:hidden hidden bg-white border-t animate-fadeIn" id="mobile-menu">
-            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i class="fa fa-home mr-2"></i> 首页</a>
+            <div class="w-full max-w-7xl mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html" class="py-3 px-2 rounded-md hover:bg-gray-50 hover:text-primary transition-all"><i
+                        class="fa fa-home mr-2"></i> 首页</a>
             </div>
         </div>
     </header>
-    
+
+
     <!-- 主内容区 -->
-    <main class="flex-grow container mx-auto px-4 pt-24 pb-12">
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 pt-24 pb-12">
         <!-- 面包屑导航 -->
         <div class="flex items-center text-sm text-gray-500 mb-6">
             <a href="index.html" class="hover:text-primary transition-colors">首页</a>
             <i class="fa fa-angle-right mx-2 text-gray-400"></i>
             <span class="text-gray-700 font-medium">项目计划管理</span>
         </div>
-        
+
         <!-- 标题和操作区 -->
         <div class="bg-white rounded-lg shadow-card p-6 mb-6 animate-fadeIn">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
@@ -109,7 +228,8 @@
                 <div class="mt-4 md:mt-0 w-full md:w-auto">
                     <label class="block text-sm font-medium text-gray-700 mb-1">选择部门</label>
                     <div class="relative">
-                        <select id="departmentSelect" class="w-full md:w-48 px-3 py-2 pr-8 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary appearance-none bg-white">
+                        <select id="departmentSelect"
+                            class="w-full md:w-48 px-3 py-2 pr-8 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary appearance-none bg-white">
                             <option value="all">全部部门</option>
                             <option value="功能链部门">功能链部门</option>
                         </select>
@@ -119,20 +239,23 @@
                     </div>
                 </div>
                 <div class="mt-4 md:mt-0 flex flex-wrap gap-3 justify-center md:justify-end">
-                    <button id="addCategoryBtn" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+                    <button id="addCategoryBtn"
+                        class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
                         <i class="fa fa-plus mr-2"></i>添加类别
                     </button>
-                    <button id="exportBtn" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+                    <button id="exportBtn"
+                        class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
                         <i class="fa fa-download mr-2"></i>导出数据
                     </button>
                     <div class="relative">
-                        <input type="text" id="searchInput" placeholder="搜索计划内容..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <input type="text" id="searchInput" placeholder="搜索计划内容..."
+                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
                         <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- 计划表格区域 -->
         <div class="bg-white rounded-lg shadow-card p-6 mb-6 animate-fadeIn">
             <div class="overflow-x-auto">
@@ -140,86 +263,105 @@
             </div>
         </div>
     </main>
-    
+
     <!-- 页脚 -->
     <footer class="bg-white border-t py-6">
         <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
             <p>© 2025 功能链管理系统. 保留所有权利.</p>
         </div>
     </footer>
-    
+
     <!-- 添加类别模态框 -->
-        <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 animate-fadeIn">
-                <div class="p-5 border-b">
-                    <h3 class="text-lg font-semibold text-gray-900">添加新类别</h3>
+    <div id="addCategoryModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 animate-fadeIn">
+            <div class="p-5 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">添加新类别</h3>
+            </div>
+            <div class="p-5">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">所属部门</label>
+                    <select id="categoryDepartment"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <option value="功能链部门">功能链部门</option>
+                    </select>
                 </div>
-                <div class="p-5">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">所属部门</label>
-                        <select id="categoryDepartment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                            <option value="功能链部门">功能链部门</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">类别名称</label>
-                        <input type="text" id="categoryName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" placeholder="例如：项目设计">
-                    </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">类别名称</label>
+                    <input type="text" id="categoryName"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        placeholder="例如：项目设计">
                 </div>
+            </div>
             <div class="p-4 bg-gray-50 flex justify-end space-x-3 rounded-b-lg">
-                <button id="cancelAddCategory" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
-                <button id="confirmAddCategory" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">确认添加</button>
+                <button id="cancelAddCategory"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
+                <button id="confirmAddCategory"
+                    class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">确认添加</button>
             </div>
         </div>
     </div>
-    
+
     <!-- 添加/编辑计划项模态框 -->
-        <div id="editPlanModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 animate-fadeIn">
-                <div class="p-5 border-b">
-                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">添加计划项</h3>
+    <div id="editPlanModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 animate-fadeIn">
+            <div class="p-5 border-b">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">添加计划项</h3>
+            </div>
+            <div class="p-5">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">所属部门</label>
+                    <select id="planDepartment"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <option value="功能链部门">功能链部门</option>
+                    </select>
                 </div>
-                <div class="p-5">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">所属部门</label>
-                        <select id="planDepartment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                            <option value="功能链部门">功能链部门</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">类别</label>
-                        <select id="planCategory" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                            <!-- 类别选项将动态生成 -->
-                        </select>
-                    </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">类别</label>
+                    <select id="planCategory"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <!-- 类别选项将动态生成 -->
+                    </select>
+                </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">序号</label>
-                    <input type="number" id="planNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" min="1">
+                    <input type="number" id="planNumber"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        min="1">
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">时间（YYYY.MM）</label>
-                    <input type="text" id="planDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" placeholder="例如：2025.09">
+                    <input type="text" id="planDate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        placeholder="例如：2025.09">
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">工作内容</label>
-                    <textarea id="planContent" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" placeholder="请输入工作内容"></textarea>
+                    <textarea id="planContent" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        placeholder="请输入工作内容"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">成果/交付物</label>
-                    <input type="text" id="planDeliverable" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" placeholder="例如：CNAS能力表">
+                    <input type="text" id="planDeliverable"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        placeholder="例如：CNAS能力表">
                 </div>
                 <input type="hidden" id="planId">
                 <input type="hidden" id="isEditMode" value="false">
             </div>
             <div class="p-4 bg-gray-50 flex justify-end space-x-3 rounded-b-lg">
-                <button id="cancelEditPlan" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
-                <button id="confirmEditPlan" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">保存</button>
+                <button id="cancelEditPlan"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
+                <button id="confirmEditPlan"
+                    class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">保存</button>
             </div>
         </div>
     </div>
-    
+
     <!-- 确认删除模态框 -->
-    <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="deleteConfirmModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 animate-fadeIn">
             <div class="p-5">
                 <div class="flex items-center justify-center mb-4">
@@ -231,18 +373,20 @@
                 <p class="text-center text-gray-500 mb-4">您确定要删除这个计划项吗？此操作不可撤销。</p>
             </div>
             <div class="p-4 bg-gray-50 flex justify-center space-x-3 rounded-b-lg">
-                <button id="cancelDelete" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
-                <button id="confirmDelete" class="px-4 py-2 bg-danger text-white rounded-md hover:bg-danger/90 transition-colors">确认删除</button>
+                <button id="cancelDelete"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
+                <button id="confirmDelete"
+                    class="px-4 py-2 bg-danger text-white rounded-md hover:bg-danger/90 transition-colors">确认删除</button>
             </div>
         </div>
     </div>
-    
+
     <script>
         // 初始化数据 - 按部门组织
         const departments = [
             { name: "功能链部门", id: "function_chain" }
         ];
-        
+
         const projectData = [
             {
                 department: "功能链部门",
@@ -293,7 +437,7 @@
                 category: "储化（关键材料）-待立项",
                 items: [
                     { id: "5-1", number: 1, date: "2025.12", content: "完成仿真分析能力建设", deliverable: "仿真分析报告" },
-                    { id: "5-2", number: 2, date: "2026.3", content: "联合科创平台共同搭建小样试制平台", deliverable: "小样试制生产线" }
+                    { id: "5-2", number: 2, date: "2026.3", content: "联合科创平台共同搭建小样试制平台", deliverable: "小样试制elines" }
                 ]
             },
             {
@@ -346,25 +490,25 @@
                 ]
             }
         ];
-        
+
         // 当前编辑或删除的计划项ID
         let currentPlanId = null;
         let currentCategory = null;
         let currentDepartment = null;
-        
+
         // 根据选中的部门更新类别选择器
         function updateCategorySelect(department) {
             const categorySelect = document.getElementById('planCategory');
             categorySelect.innerHTML = '';
-            
+
             // 获取指定部门的所有类别
             const categories = projectData
                 .filter(item => department === 'all' || item.department === department)
                 .map(item => item.category);
-            
+
             // 去重
             const uniqueCategories = [...new Set(categories)];
-            
+
             if (uniqueCategories.length === 0) {
                 const option = document.createElement('option');
                 option.value = '';
@@ -379,17 +523,17 @@
                 });
             }
         }
-        
+
         // 更新部门选择器
         function updateDepartmentSelect() {
             const departmentSelect = document.getElementById('departmentSelect');
             const planDepartmentSelect = document.getElementById('planDepartment');
             const categoryDepartmentSelect = document.getElementById('categoryDepartment');
-            
+
             // 获取现有部门选项
             const existingDepartments = new Set();
             departments.forEach(dept => existingDepartments.add(dept.name));
-            
+
             // 查找数据中可能存在的新部门
             projectData.forEach(item => {
                 if (!existingDepartments.has(item.department)) {
@@ -397,27 +541,27 @@
                     departments.push({ name: item.department, id: item.department.toLowerCase().replace(/\s+/g, '_') });
                 }
             });
-            
+
             // 更新部门选择器
             [departmentSelect, planDepartmentSelect, categoryDepartmentSelect].forEach(select => {
                 if (select) {
                     // 保存当前选中的值
                     const currentValue = select.value;
-                    
+
                     // 清空并重新添加选项（保留"全部部门"选项）
                     if (select === departmentSelect) {
                         select.innerHTML = '<option value="all">全部部门</option>';
                     } else {
                         select.innerHTML = '';
                     }
-                    
+
                     departments.forEach(dept => {
                         const option = document.createElement('option');
                         option.value = dept.name;
                         option.textContent = dept.name;
                         select.appendChild(option);
                     });
-                    
+
                     // 恢复之前的选中值（如果存在）
                     if (currentValue && select.querySelector(`option[value="${currentValue}"]`)) {
                         select.value = currentValue;
@@ -425,47 +569,47 @@
                 }
             });
         }
-        
+
         // 添加新部门
         function addNewDepartment(departmentName) {
             if (!departments.some(dept => dept.name === departmentName)) {
-                departments.push({ 
-                    name: departmentName, 
-                    id: departmentName.toLowerCase().replace(/\s+/g, '_') 
+                departments.push({
+                    name: departmentName,
+                    id: departmentName.toLowerCase().replace(/\s+/g, '_')
                 });
                 updateDepartmentSelect();
             }
         }
-        
+
         // 渲染计划表格
         function renderPlanningTable(filterText = '', selectedDepartment = 'all') {
             const container = document.getElementById('planningTableContainer');
             let html = '';
-            
+
             // 按部门和类别组织数据
             const groupedData = {};
-            
+
             projectData.forEach(item => {
                 // 过滤部门
                 if (selectedDepartment !== 'all' && item.department !== selectedDepartment) {
                     return;
                 }
-                
+
                 if (!groupedData[item.department]) {
                     groupedData[item.department] = {};
                 }
-                
+
                 if (!groupedData[item.department][item.category]) {
                     groupedData[item.department][item.category] = [];
                 }
-                
+
                 groupedData[item.department][item.category].push(item);
             });
-            
+
             // 遍历部门
             Object.keys(groupedData).forEach(department => {
                 const categories = groupedData[department];
-                
+
                 // 添加部门标题
                 if (selectedDepartment === 'all') {
                     html += `
@@ -476,23 +620,23 @@
                             </div>
                     `;
                 }
-                
+
                 // 遍历该部门下的所有类别
                 Object.keys(categories).forEach(category => {
                     const categoryData = categories[category][0]; // 获取类别数据
-                    
+
                     // 过滤该类别下的计划项
-                    const filteredItems = filterText 
-                        ? categoryData.items.filter(item => 
+                    const filteredItems = filterText
+                        ? categoryData.items.filter(item =>
                             item.content.toLowerCase().includes(filterText.toLowerCase()) ||
                             item.deliverable.toLowerCase().includes(filterText.toLowerCase()) ||
                             item.date.includes(filterText)
-                          )
+                        )
                         : categoryData.items;
-                    
+
                     // 如果过滤后该类别没有项目且有过滤条件，则跳过
                     if (filterText && filteredItems.length === 0) return;
-                    
+
                     html += `
                         <div class="mb-8 last:mb-0">
                             <div class="flex justify-between items-center mb-4">
@@ -541,13 +685,13 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                 `;
-                
-                if (filteredItems.length > 0) {
-                    filteredItems.forEach(item => {
-                        // 将多行文本转换为HTML换行
-                        const formattedContent = item.content.replace(/\n/g, '<br>');
-                        
-                        html += `
+
+                    if (filteredItems.length > 0) {
+                        filteredItems.forEach(item => {
+                            // 将多行文本转换为HTML换行
+                            const formattedContent = item.content.replace(/\n/g, '<br>');
+
+                            html += `
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="py-3 px-4 text-sm text-gray-900">${item.number}</td>
                                 <td class="py-3 px-4 text-sm text-gray-900">${item.date}</td>
@@ -571,9 +715,9 @@
                                 </td>
                             </tr>
                         `;
-                    });
-                } else {
-                    html += `
+                        });
+                    } else {
+                        html += `
                         <tr>
                             <td colspan="5" class="py-8 text-center text-gray-500">
                                 <i class="fa fa-search-minus text-2xl mb-2"></i>
@@ -581,21 +725,21 @@
                             </td>
                         </tr>
                     `;
-                }
-                
-                html += `
+                    }
+
+                    html += `
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 `;
                 });
-                
+
                 if (selectedDepartment === 'all') {
                     html += '</div>'; // 关闭部门容器
                 }
             });
-            
+
             // 如果没有数据，显示空状态
             if (html === '') {
                 html = `
@@ -611,39 +755,39 @@
                     </div>
                 `;
             }
-            
+
             container.innerHTML = html;
-            
+
             // 绑定空状态下的添加按钮事件
             const emptyAddBtn = document.getElementById('emptyAddBtn');
             if (emptyAddBtn) {
-                emptyAddBtn.addEventListener('click', function() {
+                emptyAddBtn.addEventListener('click', function () {
                     document.getElementById('addCategoryModal').classList.remove('hidden');
                 });
             }
-            
+
             // 绑定添加计划项按钮事件
             document.querySelectorAll('.add-item-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const category = this.getAttribute('data-category');
                     const department = this.getAttribute('data-department');
                     openAddPlanModal(category, department);
                 });
             });
-            
+
             // 绑定编辑按钮事件
             document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const id = this.getAttribute('data-id');
                     const category = this.getAttribute('data-category');
                     const department = this.getAttribute('data-department');
                     openEditPlanModal(id, category, department);
                 });
             });
-            
+
             // 绑定删除按钮事件
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const id = this.getAttribute('data-id');
                     const category = this.getAttribute('data-category');
                     const department = this.getAttribute('data-department');
@@ -651,7 +795,7 @@
                 });
             });
         }
-        
+
         // 打开添加计划项模态框
         function openAddPlanModal(category, department) {
             document.getElementById('modalTitle').textContent = '添加计划项';
@@ -664,7 +808,7 @@
             document.getElementById('planDeliverable').value = '';
             document.getElementById('planId').value = '';
             document.getElementById('isEditMode').value = 'false';
-            
+
             // 计算新计划项的序号
             const categoryData = projectData.find(c => c.category === category && c.department === department);
             if (categoryData) {
@@ -673,23 +817,23 @@
             } else {
                 document.getElementById('planNumber').value = 1;
             }
-            
+
             // 绑定部门变化事件
-            document.getElementById('planDepartment').onchange = function() {
+            document.getElementById('planDepartment').onchange = function () {
                 updateCategorySelect(this.value);
             };
-            
+
             document.getElementById('editPlanModal').classList.remove('hidden');
         }
-        
+
         // 打开编辑计划项模态框
         function openEditPlanModal(id, category, department) {
             const categoryData = projectData.find(c => c.category === category && c.department === department);
             if (!categoryData) return;
-            
+
             const item = categoryData.items.find(i => i.id === id);
             if (!item) return;
-            
+
             document.getElementById('modalTitle').textContent = '编辑计划项';
             document.getElementById('planDepartment').value = department;
             updateCategorySelect(department);
@@ -700,19 +844,19 @@
             document.getElementById('planDeliverable').value = item.deliverable;
             document.getElementById('planId').value = item.id;
             document.getElementById('isEditMode').value = 'true';
-            
+
             // 绑定部门变化事件
-            document.getElementById('planDepartment').onchange = function() {
+            document.getElementById('planDepartment').onchange = function () {
                 updateCategorySelect(this.value);
             };
-            
+
             currentPlanId = id;
             currentCategory = category;
             currentDepartment = department;
-            
+
             document.getElementById('editPlanModal').classList.remove('hidden');
         }
-        
+
         // 打开删除确认模态框
         function openDeleteConfirmModal(id, category, department) {
             currentPlanId = id;
@@ -720,7 +864,7 @@
             currentDepartment = department;
             document.getElementById('deleteConfirmModal').classList.remove('hidden');
         }
-        
+
         // 保存计划项（添加或编辑）
         function savePlanItem() {
             const department = document.getElementById('planDepartment').value;
@@ -731,16 +875,16 @@
             const deliverable = document.getElementById('planDeliverable').value;
             const isEditMode = document.getElementById('isEditMode').value === 'true';
             const planId = document.getElementById('planId').value;
-            
+
             // 验证必填字段
             if (!department || !category || !number || !date || !content) {
                 alert('请填写必填字段：部门、类别、序号、时间和工作内容');
                 return;
             }
-            
+
             // 确保部门存在
             addNewDepartment(department);
-            
+
             // 查找或创建类别
             let categoryData = projectData.find(c => c.category === category && c.department === department);
             if (!categoryData) {
@@ -751,14 +895,14 @@
                     items: []
                 };
                 projectData.push(categoryData);
-                
+
                 // 更新类别选择器
                 updateCategorySelect(department);
             }
-            
+
             // 获取当前选中的部门筛选器值
             const selectedDepartment = document.getElementById('departmentSelect').value;
-            
+
             if (isEditMode) {
                 // 如果部门或类别发生变化，需要在旧位置删除并在新位置添加
                 if (department !== currentDepartment || category !== currentCategory) {
@@ -768,7 +912,7 @@
                         const oldIndex = oldCategoryData.items.findIndex(item => item.id === planId);
                         if (oldIndex !== -1) {
                             oldCategoryData.items.splice(oldIndex, 1);
-                            
+
                             // 如果旧类别为空，删除该类别
                             if (oldCategoryData.items.length === 0) {
                                 const categoryIndex = projectData.findIndex(c => c.category === currentCategory && c.department === currentDepartment);
@@ -778,7 +922,7 @@
                             }
                         }
                     }
-                    
+
                     // 在新位置添加
                     const newId = `${projectData.indexOf(categoryData) + 1}-${categoryData.items.length + 1}`;
                     categoryData.items.push({
@@ -812,26 +956,26 @@
                     deliverable: deliverable
                 });
             }
-            
+
             // 按序号排序
             categoryData.items.sort((a, b) => a.number - b.number);
-            
+
             // 重新渲染表格
             renderPlanningTable(document.getElementById('searchInput').value, selectedDepartment);
-            
+
             // 关闭模态框
             document.getElementById('editPlanModal').classList.add('hidden');
         }
-        
+
         // 删除计划项
         function deletePlanItem() {
             const categoryData = projectData.find(c => c.category === currentCategory && c.department === currentDepartment);
             if (!categoryData) return;
-            
+
             const index = categoryData.items.findIndex(item => item.id === currentPlanId);
             if (index !== -1) {
                 categoryData.items.splice(index, 1);
-                
+
                 // 如果类别为空，考虑是否删除类别
                 if (categoryData.items.length === 0) {
                     const categoryIndex = projectData.findIndex(c => c.category === currentCategory && c.department === currentDepartment);
@@ -839,39 +983,39 @@
                         projectData.splice(categoryIndex, 1);
                     }
                 }
-                
+
                 // 重新渲染表格
                 renderPlanningTable(document.getElementById('searchInput').value, document.getElementById('departmentSelect').value);
-                
+
                 // 关闭模态框
                 document.getElementById('deleteConfirmModal').classList.add('hidden');
             }
         }
-        
+
         // 添加新类别
         function addNewCategory() {
             const department = document.getElementById('categoryDepartment').value;
             const categoryName = document.getElementById('categoryName').value.trim();
-            
+
             if (!department) {
                 alert('请选择所属部门');
                 return;
             }
-            
+
             if (!categoryName) {
                 alert('请输入类别名称');
                 return;
             }
-            
+
             // 检查类别是否已存在（在同一部门下）
             if (projectData.some(c => c.category === categoryName && c.department === department)) {
                 alert('该部门下已存在此类别');
                 return;
             }
-            
+
             // 确保部门存在
             addNewDepartment(department);
-            
+
             // 添加新类别
             projectData.push({
                 department: department,
@@ -879,29 +1023,29 @@
                 category: categoryName,
                 items: []
             });
-            
+
             // 更新类别选择器
             updateDepartmentSelect();
-            
+
             // 重新渲染表格
             renderPlanningTable(document.getElementById('searchInput').value, document.getElementById('departmentSelect').value);
-            
+
             // 关闭模态框
             document.getElementById('addCategoryModal').classList.add('hidden');
             document.getElementById('categoryName').value = '';
         }
-        
+
         // 导出数据
         function exportData() {
             const data = [];
             const selectedDepartment = document.getElementById('departmentSelect').value;
-            
+
             projectData.forEach(category => {
                 // 如果选择了特定部门，则只导出该部门的数据
                 if (selectedDepartment !== 'all' && category.department !== selectedDepartment) {
                     return;
                 }
-                
+
                 category.items.forEach(item => {
                     data.push({
                         部门: category.department,
@@ -913,19 +1057,19 @@
                     });
                 });
             });
-            
+
             if (data.length === 0) {
                 alert('没有可导出的数据');
                 return;
             }
-            
+
             // 转换为CSV
             const headers = Object.keys(data[0]);
             const csvRows = [];
-            
+
             // 添加表头
             csvRows.push(headers.join(','));
-            
+
             // 添加数据行
             for (const row of data) {
                 const values = headers.map(header => {
@@ -938,96 +1082,150 @@
                 });
                 csvRows.push(values.join(','));
             }
-            
+
             const csvString = csvRows.join('\n');
             const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
-            
+
             link.setAttribute('href', url);
             const departmentLabel = selectedDepartment === 'all' ? '全部部门' : selectedDepartment;
             link.setAttribute('download', `项目计划_${departmentLabel}_${new Date().toLocaleDateString()}.csv`);
             link.style.visibility = 'hidden';
-            
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
-        
+
         // 初始化事件监听器
         function initEventListeners() {
             // 移动端菜单切换
-            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-                const mobileMenu = document.getElementById('mobile-menu');
-                mobileMenu.classList.toggle('hidden');
-            });
-            
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function () {
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu) {
+                        mobileMenu.classList.toggle('hidden');
+                    }
+                });
+            }
+
             // 添加类别按钮
-            document.getElementById('addCategoryBtn').addEventListener('click', function() {
-                updateDepartmentSelect();
-                document.getElementById('addCategoryModal').classList.remove('hidden');
-            });
-            
+            const addCategoryBtn = document.getElementById('addCategoryBtn');
+            if (addCategoryBtn) {
+                addCategoryBtn.addEventListener('click', function () {
+                    updateDepartmentSelect();
+                    const addCategoryModal = document.getElementById('addCategoryModal');
+                    if (addCategoryModal) {
+                        addCategoryModal.classList.remove('hidden');
+                    }
+                });
+            }
+
             // 取消添加类别
-            document.getElementById('cancelAddCategory').addEventListener('click', function() {
-                document.getElementById('addCategoryModal').classList.add('hidden');
-                document.getElementById('categoryName').value = '';
-            });
-            
+            const cancelAddCategory = document.getElementById('cancelAddCategory');
+            if (cancelAddCategory) {
+                cancelAddCategory.addEventListener('click', function () {
+                    const addCategoryModal = document.getElementById('addCategoryModal');
+                    const categoryName = document.getElementById('categoryName');
+                    if (addCategoryModal) {
+                        addCategoryModal.classList.add('hidden');
+                    }
+                    if (categoryName) {
+                        categoryName.value = '';
+                    }
+                });
+            }
+
             // 确认添加类别
-            document.getElementById('confirmAddCategory').addEventListener('click', addNewCategory);
-            
+            const confirmAddCategory = document.getElementById('confirmAddCategory');
+            if (confirmAddCategory) {
+                confirmAddCategory.addEventListener('click', addNewCategory);
+            }
+
             // 取消编辑计划
-            document.getElementById('cancelEditPlan').addEventListener('click', function() {
-                document.getElementById('editPlanModal').classList.add('hidden');
-            });
-            
+            const cancelEditPlan = document.getElementById('cancelEditPlan');
+            if (cancelEditPlan) {
+                cancelEditPlan.addEventListener('click', function () {
+                    const editPlanModal = document.getElementById('editPlanModal');
+                    if (editPlanModal) {
+                        editPlanModal.classList.add('hidden');
+                    }
+                });
+            }
+
             // 确认编辑计划
-            document.getElementById('confirmEditPlan').addEventListener('click', savePlanItem);
-            
+            const confirmEditPlan = document.getElementById('confirmEditPlan');
+            if (confirmEditPlan) {
+                confirmEditPlan.addEventListener('click', savePlanItem);
+            }
+
             // 取消删除
-            document.getElementById('cancelDelete').addEventListener('click', function() {
-                document.getElementById('deleteConfirmModal').classList.add('hidden');
-            });
-            
+            const cancelDelete = document.getElementById('cancelDelete');
+            if (cancelDelete) {
+                cancelDelete.addEventListener('click', function () {
+                    const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+                    if (deleteConfirmModal) {
+                        deleteConfirmModal.classList.add('hidden');
+                    }
+                });
+            }
+
             // 确认删除
-            document.getElementById('confirmDelete').addEventListener('click', deletePlanItem);
-            
+            const confirmDelete = document.getElementById('confirmDelete');
+            if (confirmDelete) {
+                confirmDelete.addEventListener('click', deletePlanItem);
+            }
+
             // 导出按钮
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-            
+            const exportBtn = document.getElementById('exportBtn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', exportData);
+            }
+
             // 搜索功能
-            document.getElementById('searchInput').addEventListener('input', function() {
-                const selectedDepartment = document.getElementById('departmentSelect').value;
-                renderPlanningTable(this.value, selectedDepartment);
-            });
-            
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const departmentSelect = document.getElementById('departmentSelect');
+                    const selectedDepartment = departmentSelect ? departmentSelect.value : '';
+                    renderPlanningTable(this.value, selectedDepartment);
+                });
+            }
+
             // 部门筛选功能
-            document.getElementById('departmentSelect').addEventListener('change', function() {
-                const searchText = document.getElementById('searchInput').value;
-                renderPlanningTable(searchText, this.value);
-                
-                // 如果正在添加或编辑计划，也更新部门选择器
-                updateCategorySelect(this.value);
-            });
-            
+            const departmentSelect = document.getElementById('departmentSelect');
+            if (departmentSelect) {
+                departmentSelect.addEventListener('change', function () {
+                    const searchInput = document.getElementById('searchInput');
+                    const searchText = searchInput ? searchInput.value : '';
+                    renderPlanningTable(searchText, this.value);
+
+                    // 如果正在添加或编辑计划，也更新部门选择器
+                    updateCategorySelect(this.value);
+                });
+            }
+
             // 点击模态框外部关闭
-            window.addEventListener('click', function(event) {
+            window.addEventListener('click', function (event) {
                 const modals = ['addCategoryModal', 'editPlanModal', 'deleteConfirmModal'];
                 modals.forEach(modalId => {
                     const modal = document.getElementById(modalId);
+                    if (!modal) return;
                     if (event.target === modal) {
                         modal.classList.add('hidden');
                     }
                 });
             });
-            
+
             // ESC键关闭模态框
-            document.addEventListener('keydown', function(event) {
+            document.addEventListener('keydown', function (event) {
                 if (event.key === 'Escape') {
                     const modals = ['addCategoryModal', 'editPlanModal', 'deleteConfirmModal'];
                     modals.forEach(modalId => {
                         const modal = document.getElementById(modalId);
+                        if (!modal) return;
                         if (!modal.classList.contains('hidden')) {
                             modal.classList.add('hidden');
                         }
@@ -1035,14 +1233,61 @@
                 }
             });
         }
-        
+
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             updateDepartmentSelect();
             updateCategorySelect('功能链部门');
             initEventListeners();
             renderPlanningTable();
         });
     </script>
+
+    <script>
+        // 侧边栏菜单展开/折叠
+        document.addEventListener('DOMContentLoaded', function () {
+            // 侧边栏菜单展开/折叠
+            const parentItems = document.querySelectorAll('.sidebar-parent-item');
+            parentItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('.fa-angle-down');
+
+                    // 切换当前子菜单
+                    if (submenu && submenu.classList.contains('sidebar-submenu')) {
+                        submenu.classList.toggle('hidden');
+                        icon.style.transform = submenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+                    }
+                });
+            });
+
+            // 调整主内容区域的padding-left
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.style.paddingLeft = '272px'; // 64px + 16px
+            }
+
+            // 初始化事件监听器
+            initEventListeners();
+
+            // 移动端侧边栏处理
+            const menuToggle = document.getElementById('menu-toggle');
+            const closeSidebar = document.getElementById('close-sidebar');
+            const sidebar = document.getElementById('sidebar');
+
+            if (menuToggle && sidebar) {
+                menuToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+            }
+
+            if (closeSidebar && sidebar) {
+                closeSidebar.addEventListener('click', function () {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>
